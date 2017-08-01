@@ -82,4 +82,11 @@ public class Constant {
     public static String YI_TONG_GUO = "已通过";
     public static String LU_RU_ZHONG = "录入中";
 
+
+
+    //doctor表
+    public static String SALARY_NUM = "salaryNum";
+    public static String LEVEL = "level";
+
+
 }

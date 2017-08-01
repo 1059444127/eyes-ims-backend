@@ -194,58 +194,6 @@ public class UserController {
     }
 
 
-    /**
-     * 顾问部主管列表
-     *
-     * @return
-     */
-    @RequestMapping(value = "manager/list", method = RequestMethod.POST)
-    @ResponseBody
-    public CommonResult queryManagerList(@RequestBody Map<String, Object> params) {
-
-        String manager = (String) params.get(Constant.MANAGER);
-
-        User mgr = new User();
-        mgr.setRole(manager);
-        List<User> mgrList = this.userService.queryListByWhere(mgr);
-
-        return CommonResult.success("查询成功", mgrList);
-    }
-
-
-//    /**
-//     * 级联查询顾问部主管和员工
-//     *
-//     * @return
-//     */
-//    @RequestMapping(value = "advise/list", method = RequestMethod.GET)
-//    @ResponseBody
-//    public CommonResult queryAdviseList() {
-//
-//        User adviseMgr = new User();
-//        adviseMgr.setRole(Constant.ADVISE_MANAGER);
-//        List<User> adviseMgrList = this.userService.queryListByWhere(adviseMgr);
-//
-//        Map<String, List<User>> result = new HashMap<>();
-//
-//        adviseMgrList.forEach(adviseMgrTemp -> {
-//
-//            Integer adviseMgrId = adviseMgrTemp.getId();
-//
-//            User adviser = new User();
-//            adviser.setStaffMgrId(adviseMgrId);
-//            adviser.setRole(Constant.ADVISER);
-//            List<User> adviserList = this.userService.queryListByWhere(adviser);
-//
-//            // 只返回有员工的顾问主管和员工级联关系
-//            if (adviserList != null && adviserList.size() > 0) {
-//                result.put(adviseMgrTemp.getName(), adviserList);
-//            }
-//        });
-//
-//        return CommonResult.success("查询成功", result);
-//    }
-
 
     /**
      * 条件分页查询用户

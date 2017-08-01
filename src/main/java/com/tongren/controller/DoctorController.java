@@ -1,0 +1,179 @@
+package com.tongren.controller;
+
+import com.github.pagehelper.PageInfo;
+import com.tongren.bean.CommonResult;
+import com.tongren.bean.Constant;
+import com.tongren.bean.Identity;
+import com.tongren.bean.PageResult;
+import com.tongren.bean.rolecheck.RequiredRoles;
+import com.tongren.pojo.Doctor;
+import com.tongren.service.DoctorService;
+import com.tongren.util.Validator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+import javax.servlet.http.HttpSession;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * DoctorController
+ */
+@Controller
+@RequestMapping("doctor")
+public class DoctorController {
+
+    private static final Logger logger = LoggerFactory.getLogger(DoctorController.class);
+
+    @Autowired
+    private DoctorService doctorService;
+
+    /**
+     * 添加员工
+     *
+     * @param params
+     * @return
+     */
+    @RequestMapping(method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult addDoctor(@RequestBody Map<String, Object> params) {
+
+        String name = (String) params.get(Constant.NAME);
+        String salaryNum = (String) params.get(Constant.SALARY_NUM);
+        String level = (String) params.get(Constant.LEVEL);
+
+        Doctor doctor = new Doctor();
+
+        if (Validator.checkEmpty(name) || Validator.checkEmpty(salaryNum) || Validator.checkEmpty(level)) {
+            return CommonResult.failure("添加失败，信息不完整");
+        } else {
+            doctor.setName(name);
+            doctor.setSalaryNum(salaryNum);
+            doctor.setLevel(level);
+        }
+
+
+        this.doctorService.save(doctor);
+        return CommonResult.success("添加成功");
+    }
+
+
+    /**
+     * 修改别的用户的信息
+     *
+     * @param params
+     * @return
+     */
+    @RequestMapping(method = RequestMethod.PUT)
+    @ResponseBody
+    public CommonResult updateDoctor(@RequestBody Map<String, Object> params) {
+
+        Integer doctorId = (Integer) params.get("doctorId");
+        // 修改别的用户的时候不能修改name和phone
+        String name = (String) params.get(Constant.NAME);
+        String salaryNum = (String) params.get(Constant.SALARY_NUM);
+        String level = (String) params.get(Constant.LEVEL);
+
+        // 未修改的doctor
+        Doctor doctor = this.doctorService.queryById(doctorId);
+
+        if (!Validator.checkEmpty(name)) {
+            doctor.setName(name);
+        }
+
+
+        if (!Validator.checkEmpty(salaryNum)) {
+            doctor.setSalaryNum(salaryNum);
+        }
+
+        if (!Validator.checkEmpty(level)) {
+            doctor.setLevel(level);
+        }
+
+        this.doctorService.update(doctor);
+
+        return CommonResult.success("修改成功");
+    }
+
+
+    /**
+     * 查询用户信息
+     *
+     * @param doctorId
+     * @return
+     */
+    @RequestMapping(value = "{doctorId}", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult queryById(@PathVariable("doctorId") Integer doctorId) {
+
+        Doctor doctor = this.doctorService.queryById(doctorId);
+        if (doctor == null) {
+            return CommonResult.failure("用户不存在");
+        }
+
+        return CommonResult.success("查询成功", doctor);
+    }
+
+
+    /**
+     * 删除用户
+     * role改为已删除，doctorname加上_deleted的后缀
+     *
+     * @param doctorId
+     * @return
+     */
+    @RequestMapping(value = "{doctorId}", method = RequestMethod.DELETE)
+    @ResponseBody
+    @RequiredRoles(roles = {"系统管理员"})
+    public CommonResult deleteById(@PathVariable("doctorId") Integer doctorId) {
+
+        Doctor doctor = this.doctorService.queryById(doctorId);
+        if (doctor == null) {
+            return CommonResult.failure("用户不存在");
+        }
+
+        // this.doctorService.deleteById(doctorId);
+        this.doctorService.deleteById(doctorId);
+
+        logger.info("删除用户：{}", doctor.getName());
+
+        return CommonResult.success("删除成功");
+    }
+
+
+
+
+
+
+    /**
+     * 条件分页查询用户
+     * 会员member、职员employee
+     *
+     * @param params
+     * @return
+     */
+    @RequestMapping(value = "list", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult queryDoctors(@RequestBody Map<String, Object> params, HttpSession session) {
+
+        Integer pageNow = (Integer) params.get(Constant.PAGE_NOW);
+        Integer pageSize = (Integer) params.get(Constant.PAGE_SIZE);
+
+        String name = (String) params.get(Constant.NAME);
+        String salaryNum = (String) params.get(Constant.SALARY_NUM);
+        String level = (String) params.get(Constant.LEVEL);
+
+        Identity identity = (Identity) session.getAttribute(Constant.IDENTITY);
+
+        List<Doctor> doctorList = this.doctorService.queryDoctorList(pageNow, pageSize, name, salaryNum, level);
+        PageResult pageResult = new PageResult(new PageInfo<>(doctorList));
+
+        logger.info("pageNow: {}, pageSize: {}, role: {}, phone: {}, name: {}", pageNow, pageSize, name, salaryNum, level);
+
+        return CommonResult.success("查询成功", pageResult);
+    }
+
+
+}

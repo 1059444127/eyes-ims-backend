@@ -176,42 +176,6 @@ public class AuthController {
 
 
     /**
-     * 会员登录
-     *
-     * @param params
-     * @return
-     */
-    @RequestMapping(value = "member/login", method = RequestMethod.POST)
-    @ResponseBody
-    public CommonResult userLogin(@RequestBody Map<String, String> params) {
-
-        // 得到用户名和密码，用户名就是phone
-        String username = params.get(Constant.USERNAME);
-        String password = params.get(Constant.PASSWORD);
-
-        return this.userService.login(username, password, "member");
-    }
-
-
-    /**
-     * 职员登录
-     *
-     * @param params
-     * @return
-     */
-    @RequestMapping(value = "employee/login", method = RequestMethod.POST)
-    @ResponseBody
-    public CommonResult employeeLogin(@RequestBody Map<String, String> params) {
-
-        // 得到用户名和密码，用户名就是phone
-        String username = params.get(Constant.USERNAME);
-        String password = params.get(Constant.PASSWORD);
-
-        return this.userService.login(username, password, "employee");
-    }
-
-
-    /**
      * 登录
      *
      * @param params
