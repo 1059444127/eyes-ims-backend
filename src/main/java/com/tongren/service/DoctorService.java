@@ -29,21 +29,6 @@ public class DoctorService extends BaseService<Doctor> {
 
 
     /**
-     * 查询所有医师
-     *
-     * @return
-     */
-    public List<Doctor> queryAllMembers() {
-
-        Example example = new Example(Doctor.class);
-        Example.Criteria criteria = example.createCriteria();
-
-        criteria.andLike("role", "%医师%");
-        return this.getMapper().selectByExample(example);
-    }
-
-
-    /**
      * 条件查询医师
      * @param pageNow
      * @param pageSize

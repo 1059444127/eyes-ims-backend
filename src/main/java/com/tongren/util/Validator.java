@@ -25,7 +25,17 @@ public class Validator {
         return input == null;
     }
 
+    public static boolean checkNull(Integer input) {
+        return input == null;
+    }
 
+    public static boolean checkNull(Float input) {
+        return input == null;
+    }
+
+    public static boolean checkNull(Double input) {
+        return input == null;
+    }
     /**
      * 验证Email
      *

@@ -16,7 +16,7 @@ public class Surgery {
 
     private String alias;
 
-    private Float price;
+    private Double price;
 
     private String category;
 
@@ -27,15 +27,15 @@ public class Surgery {
     private String chargeName;
 
     @Column(name = "charge_count")
-    private String chargeCount;
+    private Double chargeCount;
 
     @Column(name = "charge_price")
-    private Float chargePrice;
+    private Double chargePrice;
 
     @Column(name = "extra_price")
-    private Float extraPrice;
+    private Double extraPrice;
 
-    private Integer level;
+    private String level;
 
     /**
      * @return id
@@ -96,14 +96,14 @@ public class Surgery {
     /**
      * @return price
      */
-    public Float getPrice() {
+    public Double getPrice() {
         return price;
     }
 
     /**
      * @param price
      */
-    public void setPrice(Float price) {
+    public void setPrice(Double price) {
         this.price = price;
     }
 
@@ -152,56 +152,56 @@ public class Surgery {
     /**
      * @return charge_count
      */
-    public String getChargeCount() {
+    public Double getChargeCount() {
         return chargeCount;
     }
 
     /**
      * @param chargeCount
      */
-    public void setChargeCount(String chargeCount) {
+    public void setChargeCount(Double chargeCount) {
         this.chargeCount = chargeCount;
     }
 
     /**
      * @return charge_price
      */
-    public Float getChargePrice() {
+    public Double getChargePrice() {
         return chargePrice;
     }
 
     /**
      * @param chargePrice
      */
-    public void setChargePrice(Float chargePrice) {
+    public void setChargePrice(Double chargePrice) {
         this.chargePrice = chargePrice;
     }
 
     /**
      * @return extra_price
      */
-    public Float getExtraPrice() {
+    public Double getExtraPrice() {
         return extraPrice;
     }
 
     /**
      * @param extraPrice
      */
-    public void setExtraPrice(Float extraPrice) {
+    public void setExtraPrice(Double extraPrice) {
         this.extraPrice = extraPrice;
     }
 
     /**
      * @return level
      */
-    public Integer getLevel() {
+    public String getLevel() {
         return level;
     }
 
     /**
      * @param level
      */
-    public void setLevel(Integer level) {
+    public void setLevel(String level) {
         this.level = level;
     }
 }
