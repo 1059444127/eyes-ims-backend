@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tongren.mapper.RecordDoctorMapper" >
+  <resultMap id="BaseResultMap" type="com.tongren.pojo.RecordDoctor" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="record_id" property="recordId" jdbcType="INTEGER" />
+    <result column="doctor_id" property="doctorId" jdbcType="INTEGER" />
+    <result column="doctor_type" property="doctorType" jdbcType="VARCHAR" />
+    <result column="doctor_salary_num" property="doctorSalaryNum" jdbcType="VARCHAR" />
+    <result column="doctor_name" property="doctorName" jdbcType="VARCHAR" />
+    <result column="doctor_level" property="doctorLevel" jdbcType="VARCHAR" />
+    <result column="doctor_score" property="doctorScore" jdbcType="INTEGER" />
+    <result column="date" property="date" jdbcType="DATE" />
+  </resultMap>
+</mapper>

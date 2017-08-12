@@ -7,14 +7,18 @@ import com.tongren.bean.Identity;
 import com.tongren.bean.PageResult;
 import com.tongren.bean.rolecheck.RequiredRoles;
 import com.tongren.pojo.Doctor;
+import com.tongren.pojo.Surgery;
 import com.tongren.service.DoctorService;
 import com.tongren.util.Validator;
+import ken.searcher.PinyinSearcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -173,6 +177,30 @@ public class DoctorController {
         logger.info("pageNow: {}, pageSize: {}, role: {}, phone: {}, name: {}", pageNow, pageSize, name, salaryNum, level);
 
         return CommonResult.success("查询成功", pageResult);
+    }
+
+    @RequestMapping(value = "list_keyword", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult queryDoctorsByKeyword(@RequestBody Map<String, Object> params, HttpSession session) {
+
+        String keyword = (String) params.get("keyword");
+        List<Doctor> doctorList = this.doctorService.querySurgeonAndHelperList();
+
+        //构造待查集合
+        List<Object> selectedList = new ArrayList<>();
+        Iterator iterator = doctorList.iterator();
+        while(iterator.hasNext()) selectedList.add(iterator.next());
+
+        //筛选出符合keyword的项
+        try {
+            selectedList = new PinyinSearcher().match(keyword, selectedList, "name");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return CommonResult.failure("查询失败");
+        }
+
+
+        return  CommonResult.success("查询成功", selectedList);
     }
 
 

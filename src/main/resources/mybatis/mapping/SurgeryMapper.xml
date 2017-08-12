@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tongren.mapper.SurgeryMapper" >
+  <resultMap id="BaseResultMap" type="com.tongren.pojo.Surgery" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="alias" property="alias" jdbcType="VARCHAR" />
+    <result column="price" property="price" jdbcType="DOUBLE" />
+    <result column="category" property="category" jdbcType="VARCHAR" />
+    <result column="charge_code" property="chargeCode" jdbcType="VARCHAR" />
+    <result column="charge_name" property="chargeName" jdbcType="VARCHAR" />
+    <result column="charge_count" property="chargeCount" jdbcType="DOUBLE" />
+    <result column="charge_price" property="chargePrice" jdbcType="DOUBLE" />
+    <result column="extra_price" property="extraPrice" jdbcType="DOUBLE" />
+    <result column="level" property="level" jdbcType="VARCHAR" />
+  </resultMap>
+</mapper>

@@ -59,7 +59,18 @@ public class DoctorService extends BaseService<Doctor> {
         return this.getMapper().selectByExample(example);
     }
 
+    /**
+     * 查询所有职称为医师的术者/助手
+     * @return
+     */
+    public List<Doctor> querySurgeonAndHelperList() {
 
+        Example example = new Example(Doctor.class);
+        Example.Criteria criteria = example.createCriteria();
+
+        criteria.andLike(Constant.LEVEL, "%医师%");
+        return this.getMapper().selectByExample(example);
+    }
 
 
 

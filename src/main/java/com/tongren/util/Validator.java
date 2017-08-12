@@ -21,21 +21,11 @@ public class Validator {
      * @param input
      * @return
      */
-    public static boolean checkNull(String input) {
+    public static boolean checkNull(Object input) {
         return input == null;
     }
 
-    public static boolean checkNull(Integer input) {
-        return input == null;
-    }
 
-    public static boolean checkNull(Float input) {
-        return input == null;
-    }
-
-    public static boolean checkNull(Double input) {
-        return input == null;
-    }
     /**
      * 验证Email
      *

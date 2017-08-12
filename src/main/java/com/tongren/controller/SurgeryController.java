@@ -8,6 +8,7 @@ import com.tongren.bean.PageResult;
 import com.tongren.bean.rolecheck.RequiredRoles;
 import com.tongren.pojo.Surgery;
 import com.tongren.service.SurgeryService;
+
 import com.tongren.util.Validator;
 import ken.searcher.PinyinSearcher;
 import org.slf4j.Logger;
@@ -17,6 +18,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -243,4 +246,27 @@ public class SurgeryController {
     }
 
 
+    @RequestMapping(value = "list_keyword", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult querySergerysByKeyword(@RequestBody Map<String, Object> params, HttpSession session) {
+
+        String keyword = (String) params.get("keyword");
+        List<Surgery> surgeryList = this.surgeryService.queryAll();
+
+        //构造待查集合
+        List<Object> selectedList = new ArrayList<>();
+        Iterator iterator = surgeryList.iterator();
+        while(iterator.hasNext()) selectedList.add(iterator.next());
+
+        //筛选出符合keyword的项
+        try {
+            selectedList = new PinyinSearcher().match(keyword, selectedList, "name");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return CommonResult.failure("查询失败");
+        }
+
+
+        return  CommonResult.success("查询成功", selectedList);
+    }
 }

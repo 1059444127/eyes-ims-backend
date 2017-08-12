@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tongren.mapper.RecordMapper" >
+  <resultMap id="BaseResultMap" type="com.tongren.pojo.Record" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="history_num" property="historyNum" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="sex" property="sex" jdbcType="VARCHAR" />
+    <result column="age" property="age" jdbcType="INTEGER" />
+    <result column="eye" property="eye" jdbcType="VARCHAR" />
+    <result column="date" property="date" jdbcType="DATE" />
+  </resultMap>
+
+  <resultMap id="RecordExtend" type="com.tongren.pojo.RecordExtend" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="history_num" property="historyNum" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="sex" property="sex" jdbcType="VARCHAR" />
+    <result column="age" property="age" jdbcType="INTEGER" />
+    <result column="eye" property="eye" jdbcType="VARCHAR" />
+    <result column="surgeries" property="surgeries" jdbcType="VARCHAR" />
+    <result column="surgeons" property="surgeons" jdbcType="VARCHAR" />
+    <result column="helpers" property="helpers" jdbcType="VARCHAR" />
+    <result column="date" property="date" jdbcType="DATE" />
+  </resultMap>
+
+  <select id="selectByFilters" resultMap="RecordExtend" parameterType="map">
+    select record.*,
+           surgery_tmp.info as surgeries,
+           surgeon_tmp.info as surgeons,
+           helper_tmp.info  as helpers
+    from record
+
+    inner join
+    (select record_id, group_concat(concat(name, '(', price, ' 元)')) as info from record_surgery
+    left join surgery
+    on record_surgery.surgery_id = surgery.id
+    group by record_id) as surgery_tmp
+    on surgery_tmp.record_id = record.id
+
+    inner join
+    (select record_id, group_concat(concat(name, '(', level, ')')) as info from record_doctor
+    left join doctor
+    on record_doctor.doctor_id = doctor.id
+    where doctor_type = '术者'
+    group by record_id) as surgeon_tmp
+    on surgeon_tmp.record_id = record.id
+
+    inner join
+    (select record_id, group_concat(concat(name, '(', level, ')')) as info from record_doctor
+    left join doctor
+    on record_doctor.doctor_id = doctor.id
+    where doctor_type = '助手'
+    group by record_id) as helper_tmp
+    on helper_tmp.record_id = record.id
+
+    <where>
+
+      <if test="historyNum != null">
+        history_num like CONCAT('%', #{historyNum}, '%')
+      </if>
+
+      <if test="patientName != null">
+        and name like CONCAT('%', #{patientName}, '%')
+      </if>
+
+      <if test="beginTime != null and endTime != null">
+        and date between #{beginTime} and #{endTime}
+      </if>
+
+      <if test="surgeryName != null">
+        and surgery_tmp.info like CONCAT('%', #{surgeryName}, '%')
+      </if>
+
+      <if test="surgeonName != null">
+        and surgeon_tmp.info like CONCAT('%', #{surgeonName}, '%')
+      </if>
+
+      <if test="helperName != null">
+        and helper_tmp.info like CONCAT('%', #{helperName}, '%')
+      </if>
+
+    </where>
+
+    order by date desc
+  </select>
+
+</mapper>

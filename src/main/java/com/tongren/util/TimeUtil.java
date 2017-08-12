@@ -20,6 +20,7 @@ public class TimeUtil {
 
         if (!Validator.checkEmpty(timeString)) {
             try {
+//                timeString = timeString.replace("Z", " UTC");
                 return new SimpleDateFormat("yyyy-MM-dd").parse(timeString);
             } catch (ParseException e) {
                 e.printStackTrace();
