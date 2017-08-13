@@ -15,6 +15,7 @@ public class Constant {
 
     public static String REDIS_PRE_CODE = "REDIS_PRE_CODE_";
 
+    public static Integer CRUD_SUCCESS = 1;
     public static String SUCCESS = "SUCCESS";
     public static String FAILURE = "FAILURE";
     public static String FAILURE_LOGIN = "FAILURE_LOGIN";

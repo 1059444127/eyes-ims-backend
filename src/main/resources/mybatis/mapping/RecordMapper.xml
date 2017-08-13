@@ -33,23 +33,23 @@
            helper_tmp.info  as helpers
     from record
 
-    inner join
-    (select record_id, group_concat(concat(name, '(', price, ' 元)')) as info from record_surgery
+    left join
+    (select record_id, group_concat(concat(name, ' / ', price, ' 元')) as info from record_surgery
     left join surgery
     on record_surgery.surgery_id = surgery.id
     group by record_id) as surgery_tmp
     on surgery_tmp.record_id = record.id
 
-    inner join
-    (select record_id, group_concat(concat(name, '(', level, ')')) as info from record_doctor
+    left join
+    (select record_id, group_concat(concat(name, ' / ', doctor_score)) as info from record_doctor
     left join doctor
     on record_doctor.doctor_id = doctor.id
     where doctor_type = '术者'
     group by record_id) as surgeon_tmp
     on surgeon_tmp.record_id = record.id
 
-    inner join
-    (select record_id, group_concat(concat(name, '(', level, ')')) as info from record_doctor
+    left join
+    (select record_id, group_concat(concat(name, ' / ', doctor_score)) as info from record_doctor
     left join doctor
     on record_doctor.doctor_id = doctor.id
     where doctor_type = '助手'
@@ -58,28 +58,28 @@
 
     <where>
 
-      <if test="historyNum != null">
-        history_num like CONCAT('%', #{historyNum}, '%')
+      <if test="historyNum != null and historyNum != ''">
+        history_num like concat('%', #{historyNum}, '%')
       </if>
 
-      <if test="patientName != null">
-        and name like CONCAT('%', #{patientName}, '%')
+      <if test="patientName != null and patientName != ''">
+        and name like concat('%', #{patientName}, '%')
       </if>
 
       <if test="beginTime != null and endTime != null">
         and date between #{beginTime} and #{endTime}
       </if>
 
-      <if test="surgeryName != null">
-        and surgery_tmp.info like CONCAT('%', #{surgeryName}, '%')
+      <if test="surgeryName != null and surgeryName != ''">
+        and surgery_tmp.info like concat('%', #{surgeryName}, '%')
       </if>
 
-      <if test="surgeonName != null">
-        and surgeon_tmp.info like CONCAT('%', #{surgeonName}, '%')
+      <if test="surgeonName != null and surgeonName != ''">
+        and surgeon_tmp.info like concat('%', #{surgeonName}, '%')
       </if>
 
-      <if test="helperName != null">
-        and helper_tmp.info like CONCAT('%', #{helperName}, '%')
+      <if test="helperName != null and helperName != ''">
+        and helper_tmp.info like concat('%', #{helperName}, '%')
       </if>
 
     </where>
