@@ -128,7 +128,7 @@ public class AuthController {
             User user = new User();
             user.setUsername(username);
             user.setPassword(MD5Util.generate(password));
-            user.setRole(Constant.VISITOR);
+            user.setRole(Constant.DOCTOR);
             user.setName(name);
             user.setAvatar("avatar_default.png"); // 默认头像
             this.userService.save(user);

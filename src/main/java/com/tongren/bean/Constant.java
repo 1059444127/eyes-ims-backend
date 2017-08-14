@@ -27,8 +27,7 @@ public class Constant {
 
     public static String ADMIN = "系统管理员";
     public static String INPUTER = "数据录入员";
-    public static String HANDLER = "数据处理员";
-    public static String VISITOR = "数据阅览员";
+    public static String DOCTOR = "医师";
 
 
     public static String FINANCER = "财务部员工";
