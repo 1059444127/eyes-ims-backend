@@ -57,6 +57,7 @@ public class RecordController {
         String sex = (String) params.get("sex");
         Integer age = (Integer) params.get("age");
         String eye = (String) params.get("eye");
+        String place = (String) params.get("place");
 
         //手术记录的详细信息
         //手术数组、术者数组、助手数组
@@ -87,6 +88,7 @@ public class RecordController {
         record.setHistoryNum(historyNum);
         record.setType(type);
         record.setDate(date);
+        record.setPlace(place);
 
         if(this.recordService.save(record, surgeries, surgeons, helpers) != Constant.CRUD_SUCCESS) {
             return CommonResult.failure("事务错误");
@@ -120,6 +122,7 @@ public class RecordController {
         String sex = (String) params.get("sex");
         Integer age = (Integer) params.get("age");
         String eye = (String) params.get("eye");
+        String place = (String) params.get("place");
 
         //手术记录的详细信息
         //手术数组、术者数组、助手数组
@@ -149,6 +152,7 @@ public class RecordController {
         record.setHistoryNum(historyNum);
         record.setType(type);
         record.setDate(date);
+        record.setPlace(place);
 
         if(this.recordService.update(record, surgeries, surgeons, helpers) != Constant.CRUD_SUCCESS) {
             return CommonResult.failure("事务错误");

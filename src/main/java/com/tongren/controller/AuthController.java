@@ -3,11 +3,9 @@ package com.tongren.controller;
 import com.tongren.bean.CommonResult;
 import com.tongren.bean.Constant;
 import com.tongren.pojo.User;
-import com.tongren.service.PropertyService;
 import com.tongren.service.RedisService;
 import com.tongren.service.UserService;
 import com.tongren.util.MD5Util;
-import com.tongren.util.TimeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,9 +32,6 @@ public class AuthController {
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private PropertyService propertyService;
 
     @Autowired
     private RedisService redisService;
@@ -73,7 +68,7 @@ public class AuthController {
 
         StringBuilder code = new StringBuilder();
         Random random = new Random();
-        for (int i = 0; i < propertyService.smsCodeLen; i++) {
+        for (int i = 0; i < Constant.SMS_CODE_LEN; i++) {
             code.append(String.valueOf(random.nextInt(10)));
         }
 

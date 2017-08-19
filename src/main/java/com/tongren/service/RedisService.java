@@ -1,5 +1,6 @@
 package com.tongren.service;
 
+import com.tongren.bean.Constant;
 import com.tongren.util.JedisClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,9 +14,6 @@ public class RedisService {
 
     @Autowired(required = false)
     private JedisClient jedisClient;
-
-    @Autowired
-    private PropertyService propertyService;
 
     public String get(String key) {
         return jedisClient.get(key);
@@ -41,6 +39,6 @@ public class RedisService {
      */
     public void setSmSCode(String key, String value) {
         this.set(key, value);
-        this.expire(key, propertyService.smsCodeExpire);
+        this.expire(key, Constant.SMS_CODE_EXPIRE);
     }
 }

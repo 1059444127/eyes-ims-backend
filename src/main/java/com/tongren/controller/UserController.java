@@ -78,7 +78,7 @@ public class UserController {
         }
 
         try {
-            user.setPassword(MD5Util.generate(propertyService.defaultPassword));
+            user.setPassword(MD5Util.generate(Constant.DEFAULT_PASSWORD));
             user.setAvatar("avatar_default.png"); // 默认头像
             this.userService.save(user);
         } catch (NoSuchAlgorithmException e) {
@@ -292,7 +292,7 @@ public class UserController {
             fileName = id + "." + FileUtil.getExtensionName(file.getOriginalFilename());
 
             try {
-                Streams.copy(file.getInputStream(), new FileOutputStream(this.propertyService.filePath + "avatar/" +
+                Streams.copy(file.getInputStream(), new FileOutputStream(Constant.FILE_PATH + "avatar/" +
                         fileName), true);
             } catch (IOException e) {
                 e.printStackTrace();

@@ -24,6 +24,8 @@ public class RecordExtend {
 
 	private String eye;
 
+	private String place;
+
 	private String surgeries;
 
 	private String surgeons;
@@ -167,5 +169,13 @@ public class RecordExtend {
 
 	public void setHelpers(String helpers) {
 		this.helpers = helpers;
+	}
+
+	public String getPlace() {
+		return place;
+	}
+
+	public void setPlace(String place) {
+		this.place = place;
 	}
 }

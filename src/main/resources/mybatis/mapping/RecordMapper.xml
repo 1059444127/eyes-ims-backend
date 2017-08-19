@@ -9,6 +9,7 @@
     <result column="sex" property="sex" jdbcType="VARCHAR" />
     <result column="age" property="age" jdbcType="INTEGER" />
     <result column="eye" property="eye" jdbcType="VARCHAR" />
+    <result column="place" property="place" jdbcType="VARCHAR" />
     <result column="date" property="date" jdbcType="DATE" />
   </resultMap>
 
@@ -20,6 +21,7 @@
     <result column="sex" property="sex" jdbcType="VARCHAR" />
     <result column="age" property="age" jdbcType="INTEGER" />
     <result column="eye" property="eye" jdbcType="VARCHAR" />
+    <result column="place" property="place" jdbcType="VARCHAR" />
     <result column="surgeries" property="surgeries" jdbcType="VARCHAR" />
     <result column="surgeons" property="surgeons" jdbcType="VARCHAR" />
     <result column="helpers" property="helpers" jdbcType="VARCHAR" />
@@ -64,6 +66,10 @@
 
       <if test="patientName != null and patientName != ''">
         and name like concat('%', #{patientName}, '%')
+      </if>
+
+      <if test="place != null and place != ''">
+        and place like concat('%', #{place}, '%')
       </if>
 
       <if test="beginTime != null and endTime != null">

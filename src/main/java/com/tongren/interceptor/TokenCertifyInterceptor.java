@@ -3,11 +3,9 @@ package com.tongren.interceptor;
 
 import com.tongren.bean.Constant;
 import com.tongren.bean.Identity;
-import com.tongren.service.PropertyService;
 import com.tongren.util.TokenUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -22,9 +20,6 @@ public class TokenCertifyInterceptor implements HandlerInterceptor {
 
     private static final Logger logger = LoggerFactory.getLogger(TokenCertifyInterceptor.class);
 
-    @Autowired
-    private PropertyService propertyService;
-
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws
             Exception {
@@ -36,7 +31,7 @@ public class TokenCertifyInterceptor implements HandlerInterceptor {
         try {
 
             String token = request.getHeader(Constant.TOKEN);
-            Identity identity = TokenUtil.parseToken(token, propertyService.apiKeySecret);
+            Identity identity = TokenUtil.parseToken(token, Constant.TOKEN_API_KEY_SECRET);
 
             //把identity存入session中(其中包含用户名、角色、过期时间戳等)
             request.getSession().setAttribute(Constant.IDENTITY, identity);

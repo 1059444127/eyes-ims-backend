@@ -24,6 +24,8 @@ public class Record {
 
     private String eye;
 
+    private String place;
+
     private Date date;
 
     /**
@@ -122,6 +124,20 @@ public class Record {
      */
     public void setEye(String eye) {
         this.eye = eye;
+    }
+
+    /**
+     * @return place
+     */
+    public String getPlace() {
+        return place;
+    }
+
+    /**
+     * @param place
+     */
+    public void setPlace(String place) {
+        this.place = place;
     }
 
     /**

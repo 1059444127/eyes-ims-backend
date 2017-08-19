@@ -7,8 +7,8 @@ import com.tongren.bean.Identity;
 import com.tongren.bean.PageResult;
 import com.tongren.bean.rolecheck.RequiredRoles;
 import com.tongren.pojo.Surgery;
+import com.tongren.service.PropertyService;
 import com.tongren.service.SurgeryService;
-
 import com.tongren.util.Validator;
 import ken.searcher.PinyinSearcher;
 import org.slf4j.Logger;
@@ -18,10 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * SurgeryController
@@ -35,6 +32,8 @@ public class SurgeryController {
     @Autowired
     private SurgeryService surgeryService;
 
+    @Autowired
+    private PropertyService propertyService;
     /**
      * 添加员工
      *
@@ -268,5 +267,46 @@ public class SurgeryController {
 
 
         return  CommonResult.success("查询成功", selectedList);
+    }
+
+    /**
+     * 查询手术医嘱对应的级别系数
+     * @return
+     */
+    @RequestMapping(value = "level", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult querySurgeryLevel() {
+
+        Set<String> levelKeys = new HashSet<>();
+        levelKeys.add("surgeryFifthLevel");
+        levelKeys.add("surgeryForthLevel");
+        levelKeys.add("surgeryThirdLevel");
+        levelKeys.add("surgerySecondLevel");
+        levelKeys.add("surgeryFirstLevel");
+
+
+        Map<String, Integer> levels = propertyService.readIntegers(Constant.LEVEL_PROPERTIES_FILE_PATH, levelKeys);
+        if(levels == null) {
+
+            return CommonResult.failure("查询失败");
+        }
+
+        return CommonResult.success("查询成功", levels);
+    }
+
+
+    /**
+     * 更新手术医嘱对应的级别系数
+     * @return
+     */
+    @RequestMapping(value = "level", method = RequestMethod.PUT)
+    @ResponseBody
+    public CommonResult updateSurgeryLevel(@RequestBody Map<String, Object> params) {
+
+        if(propertyService.update(Constant.LEVEL_PROPERTIES_FILE_PATH, params) != Constant.CRUD_SUCCESS) {
+            return CommonResult.success("更新失败");
+        }
+
+        return CommonResult.success("更新成功");
     }
 }

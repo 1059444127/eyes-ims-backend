@@ -6,6 +6,7 @@ package com.tongren.bean;
  */
 public class Constant {
 
+    public static String DEFAULT_PASSWORD = "123456";
     public static String PASSWORD = "password";
     public static String USERNAME = "username";
     public static String INPUT_CODE = "inputCode";
@@ -16,6 +17,7 @@ public class Constant {
     public static String REDIS_PRE_CODE = "REDIS_PRE_CODE_";
 
     public static Integer CRUD_SUCCESS = 1;
+    public static Integer CRUD_FAILURE = 0;
     public static String SUCCESS = "SUCCESS";
     public static String FAILURE = "FAILURE";
     public static String FAILURE_LOGIN = "FAILURE_LOGIN";
@@ -89,4 +91,18 @@ public class Constant {
     public static String LEVEL = "level";
 
 
+    //配置文件
+    public static String LEVEL_PROPERTIES_FILE_PATH = "level.properties";
+
+    //系统环境配置
+    public static Integer SMS_CODE_EXPIRE = 60;
+    public static Integer SMS_CODE_LEN = 4;
+
+    //Token
+    public static String TOKEN_ISSUER = "yhch";
+    public static Long TOKEN_DURATION = 6000000L;
+    public static String TOKEN_API_KEY_SECRET = "yaochenkun_510108199311080018";
+
+    //文件服务器
+    public static String FILE_PATH = "/root/yhch-resources/";
 }

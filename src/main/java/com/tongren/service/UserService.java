@@ -4,14 +4,12 @@ import com.github.pagehelper.PageHelper;
 import com.tongren.bean.CommonResult;
 import com.tongren.bean.Constant;
 import com.tongren.bean.Identity;
-import com.tongren.bean.user.UserExtend;
 import com.tongren.pojo.User;
 import com.tongren.util.MD5Util;
 import com.tongren.util.TokenUtil;
 import com.tongren.util.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
@@ -22,9 +20,6 @@ import java.util.*;
 public class UserService extends BaseService<User> {
 
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
-
-    @Autowired
-    private PropertyService propertyService;
 
     /**
      * 检查用户名是否重复
@@ -90,12 +85,12 @@ public class UserService extends BaseService<User> {
 
         // 生成token
         CommonResult result = this.generateToken(targetUser.getId().toString(),
-                propertyService.issuer,
+                Constant.TOKEN_ISSUER,
                 targetUser.getUsername(),
                 targetUser.getRole(),
                 "/avatar/" + targetUser.getAvatar(),
-                propertyService.tokenDuration,
-                propertyService.apiKeySecret);
+                Constant.TOKEN_DURATION,
+                Constant.TOKEN_API_KEY_SECRET);
 
         ((Identity) result.getContent()).setName(targetUser.getName());
 
@@ -116,8 +111,7 @@ public class UserService extends BaseService<User> {
      * @return
      */
     public CommonResult generateToken(String id, String issuer, String username, String role, String avatar, Long
-            duration, String
-                                              apiKeySecret) {
+            duration, String apiKeySecret) {
 
         Identity identity = new Identity();
         identity.setId(id);
