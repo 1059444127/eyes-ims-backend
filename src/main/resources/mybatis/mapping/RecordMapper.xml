@@ -28,6 +28,19 @@
     <result column="date" property="date" jdbcType="DATE" />
   </resultMap>
 
+  <resultMap id="RecordExtend1" type="com.tongren.pojo.RecordExtend1" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="history_num" property="historyNum" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="sex" property="sex" jdbcType="VARCHAR" />
+    <result column="age" property="age" jdbcType="INTEGER" />
+    <result column="eye" property="eye" jdbcType="VARCHAR" />
+    <result column="place" property="place" jdbcType="VARCHAR" />
+    <result column="date" property="date" jdbcType="DATE" />
+    <result column="doctor_score" property="doctorScore" jdbcType="INTEGER" />
+  </resultMap>
+
   <select id="selectByFiltersForAdmin" resultMap="RecordExtend" parameterType="map">
     select record.*,
            surgery_tmp.info as surgeries,
@@ -156,6 +169,97 @@
     </where>
 
     order by date desc
+  </select>
+
+  <select id="selectDetailByFiltersForAdmin" resultMap="RecordExtend1" parameterType="map">
+    select record.*,
+           doctor_score
+    from record
+    left join record_doctor
+    on record.id = record_doctor.record_id
+    <where>
+
+      <if test="doctorId != null">
+        doctor_id = #{doctorId}
+      </if>
+
+      <if test="historyNum != null and historyNum != ''">
+        and record.history_num like concat('%', #{historyNum}, '%')
+      </if>
+
+      <if test="patientName != null and patientName != ''">
+        and record.name like concat('%', #{patientName}, '%')
+      </if>
+
+      <if test="place != null and place != ''">
+        and record.place like concat('%', #{place}, '%')
+      </if>
+
+      <if test="beginTime != null and endTime != null">
+        and record.date between #{beginTime} and #{endTime}
+      </if>
+
+    </where>
+  </select>
+
+  <select id="selectDetailByFiltersForOthers" resultMap="RecordExtend1" parameterType="map">
+    select record.*
+    from record
+    left join record_doctor
+    on record.id = record_doctor.record_id
+    <where>
+
+      <if test="doctorId != null">
+        doctor_id = #{doctorId}
+      </if>
+
+      <if test="historyNum != null and historyNum != ''">
+        and record.history_num like concat('%', #{historyNum}, '%')
+      </if>
+
+      <if test="patientName != null and patientName != ''">
+        and record.name like concat('%', #{patientName}, '%')
+      </if>
+
+      <if test="place != null and place != ''">
+        and record.place like concat('%', #{place}, '%')
+      </if>
+
+      <if test="beginTime != null and endTime != null">
+        and record.date between #{beginTime} and #{endTime}
+      </if>
+
+    </where>
+  </select>
+
+  <select id="selectTotalScore" resultType="java.lang.Integer" parameterType="map">
+    select SUM(doctor_score)
+    from record
+    left join record_doctor
+    on record.id = record_doctor.record_id
+    <where>
+
+      <if test="doctorId != null">
+        doctor_id = #{doctorId}
+      </if>
+
+      <if test="historyNum != null and historyNum != ''">
+        and record.history_num like concat('%', #{historyNum}, '%')
+      </if>
+
+      <if test="patientName != null and patientName != ''">
+        and record.name like concat('%', #{patientName}, '%')
+      </if>
+
+      <if test="place != null and place != ''">
+        and record.place like concat('%', #{place}, '%')
+      </if>
+
+      <if test="beginTime != null and endTime != null">
+        and record.date between #{beginTime} and #{endTime}
+      </if>
+
+    </where>
   </select>
 
 </mapper>

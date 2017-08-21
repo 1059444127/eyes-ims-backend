@@ -116,5 +116,5 @@ public class Constant {
 
     //文件服务器
     public static String FILE_PATH = "C:\\eyes_ims\\resources\\";
-//    public static String FILE_PATH = "/Users/ken/Documents/";
+    //public static String FILE_PATH = "/Users/ken/Documents/";
 }

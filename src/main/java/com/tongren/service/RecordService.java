@@ -304,4 +304,51 @@ public class RecordService extends BaseService<Record> {
         return score;
     }
 
+
+    /**
+     * 管理员查询手术记录（含工作量）
+     * @param pageNow
+     * @param pageSize
+     * @param filters
+     * @return
+     */
+    public List<RecordExtend1> queryDetailListForAdmin(Integer pageNow,
+                                                       Integer pageSize,
+                                                       Map<String, Object> filters) {
+
+        PageHelper.startPage(pageNow, pageSize);
+        return this.recordMapper.selectDetailByFiltersForAdmin(filters);
+    }
+
+    public List<RecordExtend1> queryDetailListForAdmin(Map<String, Object> filters) {
+
+        return this.recordMapper.selectDetailByFiltersForAdmin(filters);
+    }
+
+    public Integer queryTotalScore(Map<String, Object> filters) {
+
+        return this.recordMapper.selectTotalScore(filters);
+    }
+
+
+    /**
+     * 其它角色查询手术记录（不含工作量）
+     * @param pageNow
+     * @param pageSize
+     * @param filters
+     * @return
+     */
+    public List<Record> queryDetailListForOthers(Integer pageNow,
+                                                 Integer pageSize,
+                                                 Map<String, Object> filters) {
+
+        PageHelper.startPage(pageNow, pageSize);
+        return this.recordMapper.selectDetailByFiltersForOthers(filters);
+    }
+
+    public List<Record> queryDetailListForOthers(Map<String, Object> filters) {
+
+        return this.recordMapper.selectDetailByFiltersForOthers(filters);
+    }
+
 }

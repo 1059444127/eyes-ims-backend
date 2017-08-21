@@ -1,12 +1,11 @@
 package com.tongren.service;
 
 import com.github.pagehelper.PageHelper;
-import com.tongren.bean.CommonResult;
 import com.tongren.bean.Constant;
-import com.tongren.bean.Identity;
+import com.tongren.mapper.DoctorMapper;
 import com.tongren.pojo.Doctor;
-import com.tongren.util.MD5Util;
-import com.tongren.util.TokenUtil;
+import com.tongren.pojo.RecordExtend1;
+import com.tongren.pojo.Record;
 import com.tongren.util.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,15 +13,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
-import java.security.NoSuchAlgorithmException;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 @Service
 public class DoctorService extends BaseService<Doctor> {
 
     private static final Logger logger = LoggerFactory.getLogger(DoctorService.class);
+
+
+    @Autowired
+    private DoctorMapper doctorMapper;
 
     @Autowired
     private PropertyService propertyService;
@@ -71,7 +72,5 @@ public class DoctorService extends BaseService<Doctor> {
         criteria.andLike(Constant.LEVEL, "%医师%");
         return this.getMapper().selectByExample(example);
     }
-
-
 
 }
