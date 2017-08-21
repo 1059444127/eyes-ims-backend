@@ -211,14 +211,7 @@ public class DoctorController {
     @ResponseBody
     public CommonResult queryDoctorLevel() {
 
-        Set<String> levelKeys = new HashSet<>();
-        levelKeys.add("doctorHeadLevel");
-        levelKeys.add("doctorViceHeadLevel");
-        levelKeys.add("doctorTreatLevel");
-        levelKeys.add("doctorResidentLevel");
-
-
-        Map<String, Integer> levels = propertyService.readIntegers(Constant.LEVEL_PROPERTIES_FILE_PATH, levelKeys);
+        Map<String, Integer> levels = propertyService.readIntegers(Constant.LEVEL_PROPERTIES_FILE_PATH);
         if(levels == null) {
 
             return CommonResult.failure("查询失败");

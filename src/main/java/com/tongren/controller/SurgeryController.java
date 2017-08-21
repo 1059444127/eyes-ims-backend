@@ -277,15 +277,7 @@ public class SurgeryController {
     @ResponseBody
     public CommonResult querySurgeryLevel() {
 
-        Set<String> levelKeys = new HashSet<>();
-        levelKeys.add("surgeryFifthLevel");
-        levelKeys.add("surgeryForthLevel");
-        levelKeys.add("surgeryThirdLevel");
-        levelKeys.add("surgerySecondLevel");
-        levelKeys.add("surgeryFirstLevel");
-
-
-        Map<String, Integer> levels = propertyService.readIntegers(Constant.LEVEL_PROPERTIES_FILE_PATH, levelKeys);
+        Map<String, Integer> levels = propertyService.readIntegers(Constant.LEVEL_PROPERTIES_FILE_PATH);
         if(levels == null) {
 
             return CommonResult.failure("查询失败");

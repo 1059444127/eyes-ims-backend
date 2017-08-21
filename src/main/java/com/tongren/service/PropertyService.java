@@ -27,30 +27,24 @@ public class PropertyService {
 
 		String targetPath = rootPath  + filePath;
 
-		InputStream fis = null;
-
 		try {
 
-			fis = new FileInputStream(targetPath);
+			InputStream inputStream = new FileInputStream(targetPath);
+			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "utf-8"));
 			Properties props = new Properties();
-			props.load(fis);
+			props.load(bufferedReader);
 
 			String value = props.getProperty(key);
+
+			inputStream.close();
+			bufferedReader.close();
+
+
 			return value;
 		} catch (IOException e) {
 
 			System.err.println("属性文件读取错误");
 			return null;
-		} finally {
-
-			//关闭输入流
-			if (fis != null) {
-				try {
-					fis.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
 		}
 	}
 
@@ -63,29 +57,21 @@ public class PropertyService {
 
 		String targetPath = rootPath  + filePath;
 
-		InputStream fis = null;
-
 		try {
 
-			fis = new FileInputStream(targetPath);
+			InputStream inputStream = new FileInputStream(targetPath);
+			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "utf-8"));
 			Properties props = new Properties();
-			props.load(fis);
+			props.load(bufferedReader);
+
+			inputStream.close();
+			bufferedReader.close();
 
 			return Integer.parseInt(props.getProperty(key));
 		} catch (IOException e) {
 
 			System.err.println("属性文件读取错误");
 			return null;
-		} finally {
-
-			//关闭输入流
-			if (fis != null) {
-				try {
-					fis.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
 		}
 	}
 
@@ -100,33 +86,25 @@ public class PropertyService {
 
 		String targetPath = rootPath  + filePath;
 
-		InputStream fis = null;
-
 		try {
 
-			fis = new FileInputStream(targetPath);
+			InputStream inputStream = new FileInputStream(targetPath);
+			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "utf-8"));
 			Properties props = new Properties();
-			props.load(fis);
+			props.load(bufferedReader);
 
 			Map<String, String> map = new HashMap<>();
 			for(String key : keySet)
 				map.put(key, props.getProperty(key));
+
+			inputStream.close();
+			bufferedReader.close();
 
 			return map;
 		} catch (IOException e) {
 
 			System.err.println("属性文件读取错误");
 			return null;
-		} finally {
-
-			//关闭输入流
-			if (fis != null) {
-				try {
-					fis.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
 		}
 	}
 
@@ -140,33 +118,57 @@ public class PropertyService {
 
 		String targetPath = rootPath  + filePath;
 
-		InputStream fis = null;
-
 		try {
 
-			fis = new FileInputStream(targetPath);
+			InputStream inputStream = new FileInputStream(targetPath);
+			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "utf-8"));
 			Properties props = new Properties();
-			props.load(fis);
+			props.load(bufferedReader);
+
 
 			Map<String, Integer> map = new HashMap<>();
 			for(String key : keySet)
 				map.put(key, Integer.parseInt(props.getProperty(key)));
+
+			inputStream.close();
+			bufferedReader.close();
 
 			return map;
 		} catch (IOException e) {
 
 			System.err.println("属性文件读取错误");
 			return null;
-		} finally {
+		}
+	}
 
-			//关闭输入流
-			if (fis != null) {
-				try {
-					fis.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
+
+	/**
+	 * 读取所有的整形键值对
+	 * @param filePath
+	 * @return
+	 */
+	public Map<String, Integer> readIntegers(String filePath) {
+
+		String targetPath = rootPath  + filePath;
+
+		try {
+			InputStream inputStream = new FileInputStream(targetPath);
+			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "utf-8"));
+			Properties props = new Properties();
+			props.load(bufferedReader);
+
+			Map<String, Integer> map = new HashMap<>();
+			for(Map.Entry entry : props.entrySet())
+				map.put(String.valueOf(entry.getKey()), Integer.parseInt(entry.getValue().toString()));
+
+			inputStream.close();
+			bufferedReader.close();
+
+			return map;
+		} catch (IOException e) {
+
+			System.err.println("属性文件读取错误");
+			return null;
 		}
 	}
 
@@ -181,19 +183,25 @@ public class PropertyService {
 
 		String targetPath = rootPath  + filePath;
 
-		OutputStream fos = null;
-		InputStream fis = null;
-
 		try {
 
-			fis = new FileInputStream(targetPath);
+			InputStream inputStream = new FileInputStream(targetPath);
+			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "utf-8"));
 			Properties props = new Properties();
-			props.load(fis);
+			props.load(bufferedReader);
 
-			fos = new FileOutputStream(targetPath);
+			OutputStream outputStream = new FileOutputStream(targetPath);
+			BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "utf-8"));
 			props.setProperty(key, value);
 			// 将此 Properties 表中的属性列表（键和元素对）写入输出流
-			props.store(fos, "");
+			props.store(bufferedWriter, "");
+
+
+
+			inputStream.close();
+			bufferedReader.close();
+			outputStream.close();
+			bufferedWriter.close();
 
 			return Constant.CRUD_SUCCESS;
 
@@ -202,23 +210,6 @@ public class PropertyService {
 			System.err.println("属性文件更新错误");
 			return Constant.CRUD_FAILURE;
 
-		} finally {
-
-			//关闭输入 输出流
-			if (fos != null) {
-				try {
-					fos.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			if (fis != null) {
-				try {
-					fis.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
 		}
 	}
 
@@ -230,15 +221,15 @@ public class PropertyService {
 	public Integer update(String filePath, Map<String, Object> map) {
 
 		String targetPath = rootPath  + filePath;
-		OutputStream fos = null;
-		InputStream fis = null;
 		try {
 
-			fis = new FileInputStream(targetPath);
+			InputStream inputStream = new FileInputStream(targetPath);
+			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "utf-8"));
 			Properties props = new Properties();
-			props.load(fis);
+			props.load(bufferedReader);
 
-			fos = new FileOutputStream(targetPath);
+			OutputStream outputStream = new FileOutputStream(targetPath);
+			BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "utf-8"));
 			for(Map.Entry<String, Object> entry : map.entrySet()) {
 
 				String key = entry.getKey();
@@ -247,31 +238,20 @@ public class PropertyService {
 				props.setProperty(key, value);
 			}
 
-			props.store(fos, ""); // 将此 Properties 表中的属性列表（键和元素对）写入输出流
+			props.store(bufferedWriter, ""); // 将此 Properties 表中的属性列表（键和元素对）写入输出流
+
+			inputStream.close();
+			bufferedReader.close();
+			outputStream.close();
+			bufferedWriter.close();
+
+
 			return Constant.CRUD_SUCCESS;
 
 		} catch (IOException e) {
 
 			System.err.println("属性文件更新错误");
 			return Constant.CRUD_FAILURE;
-
-		} finally {
-
-			//关闭输入 输出流
-			if (fos != null) {
-				try {
-					fos.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			if (fis != null) {
-				try {
-					fis.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
 		}
 	}
 }

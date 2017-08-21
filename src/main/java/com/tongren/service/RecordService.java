@@ -25,13 +25,50 @@ public class RecordService extends BaseService<Record> {
     @Autowired
     private DoctorService doctorService;
 
+    @Autowired
+    private SurgeryService surgeryService;
 
-    public List<RecordExtend> queryRecordList(Integer pageNow,
+    @Autowired
+    private PropertyService propertyService;
+
+    /**
+     * 管理员查询手术记录（含工作量）
+     * @param pageNow
+     * @param pageSize
+     * @param filters
+     * @return
+     */
+    public List<RecordExtend> queryRecordListForAdmin(Integer pageNow,
                                               Integer pageSize,
                                               Map<String, Object> filters) {
 
         PageHelper.startPage(pageNow, pageSize);
-        return this.recordMapper.selectByFilters(filters);
+        return this.recordMapper.selectByFiltersForAdmin(filters);
+    }
+
+    public List<RecordExtend> queryRecordListForAdmin(Map<String, Object> filters) {
+
+        return this.recordMapper.selectByFiltersForAdmin(filters);
+    }
+
+    /**
+     * 其它角色查询手术记录（不含工作量）
+     * @param pageNow
+     * @param pageSize
+     * @param filters
+     * @return
+     */
+    public List<RecordExtend> queryRecordListForOthers(Integer pageNow,
+                                                      Integer pageSize,
+                                                      Map<String, Object> filters) {
+
+        PageHelper.startPage(pageNow, pageSize);
+        return this.recordMapper.selectByFiltersForOthers(filters);
+    }
+
+    public List<RecordExtend> queryRecordListForOthers(Map<String, Object> filters) {
+
+        return this.recordMapper.selectByFiltersForOthers(filters);
     }
 
     /**
@@ -53,21 +90,29 @@ public class RecordService extends BaseService<Record> {
         Integer recordId = record.getId();
         Date date = record.getDate();
 
+        //获取手术级别、医师级别系数列表
+        Map<String, Integer> levels = this.propertyService.readIntegers(Constant.LEVEL_PROPERTIES_FILE_PATH);
+
+
+        //本场手术的最大级别系数
+        Integer maxSurgeryLevel = 1;
+
         //构造手术记录-所做手术对象
         if(!Validator.checkNull(surgeries)) {
 
             for(HashMap<String, Object> surgery : surgeries) {
 
                 RecordSurgery recordSurgery = new RecordSurgery();
+                Integer surgeryId = Integer.parseInt((String)surgery.get("key"));
                 recordSurgery.setRecordId(recordId);
-                recordSurgery.setSurgeryId(Integer.parseInt((String)surgery.get("key")));
+                recordSurgery.setSurgeryId(surgeryId);
                 this.recordSurgeryService.save(recordSurgery);
 
-                //TODO:每轮要比较下最高级别手术
+                //每轮比较找出最高级别手术
+                Integer level = levels.get(this.surgeryService.queryById(surgeryId).getLevel());
+                maxSurgeryLevel = level > maxSurgeryLevel ? level : maxSurgeryLevel;
             }
         }
-
-        //TODO:统计surgeries里面最高级别的手术，方便之后统计术者/助手的工作量用
 
         //构造手术记录-术者对象
         if(!Validator.checkNull(surgeons)) {
@@ -87,9 +132,7 @@ public class RecordService extends BaseService<Record> {
                 recordDoctor.setDoctorName(doctor.getName());
                 recordDoctor.setDoctorSalaryNum(doctor.getSalaryNum());
                 recordDoctor.setDoctorLevel(doctor.getLevel());
-
-                //TODO:根据level和本场最高级别手术计算乘积得到工作量积分score
-                recordDoctor.setDoctorScore(5);
+                recordDoctor.setDoctorScore(this.calDoctorScore(doctor.getLevel(), maxSurgeryLevel, levels));
 
                 this.recordDoctorService.save(recordDoctor);
             }
@@ -113,9 +156,7 @@ public class RecordService extends BaseService<Record> {
                 recordDoctor.setDoctorName(doctor.getName());
                 recordDoctor.setDoctorSalaryNum(doctor.getSalaryNum());
                 recordDoctor.setDoctorLevel(doctor.getLevel());
-
-                //TODO:根据level和本场最高级别手术计算乘积得到工作量score
-                recordDoctor.setDoctorScore(5);
+                recordDoctor.setDoctorScore(this.calDoctorScore(doctor.getLevel(), maxSurgeryLevel, levels));
 
                 this.recordDoctorService.save(recordDoctor);
             }
@@ -144,6 +185,13 @@ public class RecordService extends BaseService<Record> {
         Integer recordId = record.getId();
         Date date = record.getDate();
 
+        //获取手术级别、医师级别系数列表
+        Map<String, Integer> levels = this.propertyService.readIntegers(Constant.LEVEL_PROPERTIES_FILE_PATH);
+
+
+        //本场手术的最大级别系数
+        Integer maxSurgeryLevel = 1;
+
 
         //删除手术记录-所做手术 原来的信息
         RecordSurgery recordSurgery = new RecordSurgery();
@@ -162,15 +210,17 @@ public class RecordService extends BaseService<Record> {
             for(HashMap<String, Object> surgery : surgeries) {
 
                 recordSurgery = new RecordSurgery();
+                Integer surgeryId = Integer.parseInt((String)surgery.get("key"));
                 recordSurgery.setRecordId(recordId);
-                recordSurgery.setSurgeryId(Integer.parseInt((String)surgery.get("key")));
+                recordSurgery.setSurgeryId(surgeryId);
                 this.recordSurgeryService.save(recordSurgery);
 
-                //TODO:每轮要比较下最高级别手术
+                //每轮比较找出最高级别手术
+                Integer level = levels.get(this.surgeryService.queryById(surgeryId).getLevel());
+                maxSurgeryLevel = level > maxSurgeryLevel ? level : maxSurgeryLevel;
             }
         }
 
-        //TODO:统计surgeries里面最高级别的手术，方便之后统计术者/助手的工作量用
 
         //构造手术记录-术者对象
         if(!Validator.checkNull(surgeons)) {
@@ -190,9 +240,7 @@ public class RecordService extends BaseService<Record> {
                 recordDoctor.setDoctorName(doctor.getName());
                 recordDoctor.setDoctorSalaryNum(doctor.getSalaryNum());
                 recordDoctor.setDoctorLevel(doctor.getLevel());
-
-                //TODO:根据level和本场最高级别手术计算乘积得到工作量积分score
-                recordDoctor.setDoctorScore(5);
+                recordDoctor.setDoctorScore(this.calDoctorScore(doctor.getLevel(), maxSurgeryLevel, levels));
 
                 this.recordDoctorService.save(recordDoctor);
             }
@@ -216,9 +264,7 @@ public class RecordService extends BaseService<Record> {
                 recordDoctor.setDoctorName(doctor.getName());
                 recordDoctor.setDoctorSalaryNum(doctor.getSalaryNum());
                 recordDoctor.setDoctorLevel(doctor.getLevel());
-
-                //TODO:根据level和本场最高级别手术计算乘积得到工作量score
-                recordDoctor.setDoctorScore(5);
+                recordDoctor.setDoctorScore(this.calDoctorScore(doctor.getLevel(), maxSurgeryLevel, levels));
 
                 this.recordDoctorService.save(recordDoctor);
             }
@@ -227,5 +273,35 @@ public class RecordService extends BaseService<Record> {
         return Constant.CRUD_SUCCESS;
     }
 
+    /**
+     * 计算医师的工作量积分
+     * @param doctorLevel
+     * @param maxSurgeryLevel
+     * @param levels
+     * @return
+     */
+    private Integer calDoctorScore(String doctorLevel, Integer maxSurgeryLevel, Map<String, Integer> levels) {
+
+        //根据level和本场最高级别手术计算乘积得到工作量积分score
+        Integer score = 0;
+        if(doctorLevel.indexOf(Constant.DOCTOR_VICEHEAD) != -1) {
+
+            score = levels.get(Constant.DOCTOR_VICEHEAD) * maxSurgeryLevel;
+
+        } else if(doctorLevel.indexOf(Constant.DOCTOR_HEAD) != -1) {
+
+            score = levels.get(Constant.DOCTOR_HEAD) * maxSurgeryLevel;
+
+        } else if(doctorLevel.indexOf(Constant.DOCTOR_TREAT) != -1) {
+
+            score = levels.get(Constant.DOCTOR_TREAT) * maxSurgeryLevel;
+
+        } else if(doctorLevel.indexOf(Constant.DOCTOR_RESIDENT) != -1) {
+
+            score = levels.get(Constant.DOCTOR_RESIDENT) * maxSurgeryLevel;
+        }
+
+        return score;
+    }
 
 }

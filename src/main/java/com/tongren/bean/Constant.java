@@ -90,6 +90,17 @@ public class Constant {
     public static String SALARY_NUM = "salaryNum";
     public static String LEVEL = "level";
 
+    public static String SURGERY_FIRST = "一级";
+    public static String SURGERY_SECOND = "二级";
+    public static String SURGERY_THIRD = "三级";
+    public static String SURGERY_FORTH = "四级";
+    public static String SURGERY_FIFTH = "五级";
+
+    public static String DOCTOR_HEAD = "主任医师";
+    public static String DOCTOR_VICEHEAD = "副主任医师";
+    public static String DOCTOR_TREAT = "主治医师";
+    public static String DOCTOR_RESIDENT = "住院医师";
+
 
     //配置文件
     public static String LEVEL_PROPERTIES_FILE_PATH = "level.properties";
@@ -104,5 +115,6 @@ public class Constant {
     public static String TOKEN_API_KEY_SECRET = "yaochenkun_510108199311080018";
 
     //文件服务器
-    public static String FILE_PATH = "/root/yhch-resources/";
+    public static String FILE_PATH = "C:\\eyes_ims\\resources\\";
+//    public static String FILE_PATH = "/Users/ken/Documents/";
 }

@@ -12,6 +12,8 @@ import java.util.Map;
 public interface RecordMapper extends Mapper<Record> {
 
 
-	List<RecordExtend> selectByFilters(Map<String, Object> filters);
+	List<RecordExtend> selectByFiltersForAdmin(Map<String, Object> filters);
+
+	List<RecordExtend> selectByFiltersForOthers(Map<String, Object> filters);
 
 }
