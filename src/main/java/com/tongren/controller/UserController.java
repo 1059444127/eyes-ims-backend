@@ -160,7 +160,7 @@ public class UserController {
         }
 
         // this.userService.deleteById(userId);
-        this.userService.deleteById(userId);
+        this.userService.delete(user);
 
         logger.info("删除用户：{}", user.getName());
 

@@ -49,6 +49,7 @@
         <property name="timeBetweenEvictionRunsMillis" value="60000"/>
         <property name="minEvictableIdleTimeMillis" value="300000"/>
 
+        <!--连续长时间不访问数据库自动触发事件激活-->
         <property name="validationQuery" value="SELECT 'x' from dual"/>
         <property name="testWhileIdle" value="true"/>
         <property name="testOnBorrow" value="false"/>
@@ -58,6 +59,7 @@
         <property name="maxPoolPreparedStatementPerConnectionSize" value="20"/>
 
         <property name="connectionProperties" value="config.decrypt=true"/>
+
         <!--<property name="filters" value="stat,log4j"/>-->
 
     </bean>

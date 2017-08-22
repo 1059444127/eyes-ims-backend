@@ -3,9 +3,9 @@ package com.tongren.service;
 import com.github.pagehelper.PageHelper;
 import com.tongren.bean.Constant;
 import com.tongren.mapper.DoctorMapper;
+import com.tongren.mapper.UserMapper;
 import com.tongren.pojo.Doctor;
-import com.tongren.pojo.RecordExtend1;
-import com.tongren.pojo.Record;
+import com.tongren.pojo.User;
 import com.tongren.util.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class DoctorService extends BaseService<Doctor> {
@@ -26,7 +25,28 @@ public class DoctorService extends BaseService<Doctor> {
     private DoctorMapper doctorMapper;
 
     @Autowired
+    private UserMapper userMapper;
+
+    @Autowired
     private PropertyService propertyService;
+
+    /**
+     * 添加医师，同时添加用户
+     * @param doctor
+     * @param user
+     * @return
+     */
+    public Integer save(Doctor doctor, User user) {
+
+        //添加医师
+        this.doctorMapper.insert(doctor);
+
+        //同步添加用户
+        user.setDoctorId(doctor.getId());
+        this.userMapper.insert(user);
+
+        return Constant.CRUD_SUCCESS;
+    }
 
 
     /**

@@ -4,12 +4,14 @@ import com.github.pagehelper.PageHelper;
 import com.tongren.bean.CommonResult;
 import com.tongren.bean.Constant;
 import com.tongren.bean.Identity;
+import com.tongren.mapper.DoctorMapper;
 import com.tongren.pojo.User;
 import com.tongren.util.MD5Util;
 import com.tongren.util.TokenUtil;
 import com.tongren.util.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
@@ -20,6 +22,9 @@ import java.util.*;
 public class UserService extends BaseService<User> {
 
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+
+    @Autowired
+    private DoctorMapper doctorMapper;
 
     /**
      * 检查用户名是否重复
@@ -90,6 +95,7 @@ public class UserService extends BaseService<User> {
                 targetUser.getRole(),
                 "/avatar/" + targetUser.getAvatar(),
                 Constant.TOKEN_DURATION,
+                targetUser.getDoctorId() == null ? null : targetUser.getDoctorId().toString(),
                 Constant.TOKEN_API_KEY_SECRET);
 
         ((Identity) result.getContent()).setName(targetUser.getName());
@@ -111,7 +117,7 @@ public class UserService extends BaseService<User> {
      * @return
      */
     public CommonResult generateToken(String id, String issuer, String username, String role, String avatar, Long
-            duration, String apiKeySecret) {
+            duration, String doctorId, String apiKeySecret) {
 
         Identity identity = new Identity();
         identity.setId(id);
@@ -120,6 +126,7 @@ public class UserService extends BaseService<User> {
         identity.setRole(role);
         identity.setDuration(duration);
         identity.setAvatar(avatar);
+        identity.setDoctorId(doctorId);
         String token = TokenUtil.createToken(identity, apiKeySecret);
 
         // 封装返回前端(除了用户名、角色、时间戳保留，其余消去)
@@ -233,6 +240,21 @@ public class UserService extends BaseService<User> {
         }
 
         return userIdSet;
+    }
+
+
+    /**
+     * 删除用户，并级联删除医师
+     * @param user
+     * @return
+     */
+    public Integer delete(User user) {
+
+        Integer doctorId = user.getDoctorId();
+        this.getMapper().delete(user);
+        this.doctorMapper.deleteByPrimaryKey(doctorId);
+
+        return Constant.CRUD_SUCCESS;
     }
 
 

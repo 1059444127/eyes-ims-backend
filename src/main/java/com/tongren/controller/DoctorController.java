@@ -9,8 +9,11 @@ import com.tongren.bean.rolecheck.RequiredRoles;
 import com.tongren.pojo.Doctor;
 import com.tongren.pojo.RecordExtend1;
 import com.tongren.pojo.Record;
+import com.tongren.pojo.User;
 import com.tongren.service.DoctorService;
 import com.tongren.service.PropertyService;
+import com.tongren.service.UserService;
+import com.tongren.util.MD5Util;
 import com.tongren.util.TimeUtil;
 import com.tongren.util.Validator;
 import ken.searcher.PinyinSearcher;
@@ -19,7 +22,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import javax.print.Doc;
 import javax.servlet.http.HttpSession;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 /**
@@ -33,6 +39,9 @@ public class DoctorController {
 
     @Autowired
     private DoctorService doctorService;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private PropertyService propertyService;
@@ -51,17 +60,31 @@ public class DoctorController {
         String level = (String) params.get(Constant.LEVEL);
 
         Doctor doctor = new Doctor();
+        User user = new User();
 
         if (Validator.checkEmpty(name) || Validator.checkEmpty(salaryNum) || Validator.checkEmpty(level)) {
             return CommonResult.failure("添加失败，信息不完整");
+        } else if(this.userService.isExist(salaryNum)) {
+            return CommonResult.failure("该工资号已存在");
         } else {
+
             doctor.setName(name);
             doctor.setSalaryNum(salaryNum);
             doctor.setLevel(level);
+
+            user.setName(name);
+            user.setUsername(salaryNum);
+            user.setRole(Constant.DOCTOR);
+            try {
+                user.setPassword(MD5Util.generate(Constant.DEFAULT_PASSWORD));
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            }
+            user.setAvatar("avatar_default.png"); // 默认头像
         }
 
+        this.doctorService.save(doctor, user);
 
-        this.doctorService.save(doctor);
         return CommonResult.success("添加成功");
     }
 
@@ -79,7 +102,6 @@ public class DoctorController {
         Integer doctorId = (Integer) params.get("doctorId");
         // 修改别的用户的时候不能修改name和phone
         String name = (String) params.get(Constant.NAME);
-        String salaryNum = (String) params.get(Constant.SALARY_NUM);
         String level = (String) params.get(Constant.LEVEL);
 
         // 未修改的doctor
@@ -87,11 +109,6 @@ public class DoctorController {
 
         if (!Validator.checkEmpty(name)) {
             doctor.setName(name);
-        }
-
-
-        if (!Validator.checkEmpty(salaryNum)) {
-            doctor.setSalaryNum(salaryNum);
         }
 
         if (!Validator.checkEmpty(level)) {

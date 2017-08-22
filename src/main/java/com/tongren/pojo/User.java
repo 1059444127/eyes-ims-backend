@@ -1,5 +1,6 @@
 package com.tongren.pojo;
 
+import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -16,6 +17,9 @@ public class User {
     private String name;
 
     private String role;
+
+    @Column(name = "doctor_id")
+    private Integer doctorId;
 
     private String avatar;
 
@@ -87,6 +91,20 @@ public class User {
      */
     public void setRole(String role) {
         this.role = role;
+    }
+
+    /**
+     * @return doctor_id
+     */
+    public Integer getDoctorId() {
+        return doctorId;
+    }
+
+    /**
+     * @param doctorId
+     */
+    public void setDoctorId(Integer doctorId) {
+        this.doctorId = doctorId;
     }
 
     /**
