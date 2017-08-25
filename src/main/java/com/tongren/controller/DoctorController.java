@@ -231,7 +231,7 @@ public class DoctorController {
     @ResponseBody
     public CommonResult queryDoctorLevel() {
 
-        Map<String, Integer> levels = propertyService.readIntegers(Constant.LEVEL_PROPERTIES_FILE_PATH);
+        Map<String, Double> levels = propertyService.readDoubles(Constant.LEVEL_PROPERTIES_FILE_PATH);
         if(levels == null) {
 
             return CommonResult.failure("查询失败");

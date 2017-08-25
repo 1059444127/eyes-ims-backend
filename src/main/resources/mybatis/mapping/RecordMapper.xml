@@ -121,7 +121,7 @@
     on surgery_tmp.record_id = record.id
 
     left join
-    (select record_id, group_concat(concat(name, ' / ',record_doctor.doctor_level)) as info from record_doctor
+    (select record_id, group_concat(concat(name)) as info from record_doctor
     left join doctor
     on record_doctor.doctor_id = doctor.id
     where doctor_type = '术者'
@@ -129,7 +129,7 @@
     on surgeon_tmp.record_id = record.id
 
     left join
-    (select record_id, group_concat(concat(name, ' / ',record_doctor.doctor_level)) as info from record_doctor
+    (select record_id, group_concat(concat(name)) as info from record_doctor
     left join doctor
     on record_doctor.doctor_id = doctor.id
     where doctor_type = '助手'

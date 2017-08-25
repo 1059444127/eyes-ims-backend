@@ -141,7 +141,6 @@ public class PropertyService {
 		}
 	}
 
-
 	/**
 	 * 读取所有的整形键值对
 	 * @param filePath
@@ -172,6 +171,35 @@ public class PropertyService {
 		}
 	}
 
+	/**
+	 * 读取所有的整形键值对
+	 * @param filePath
+	 * @return
+	 */
+	public Map<String, Double> readDoubles(String filePath) {
+
+		String targetPath = rootPath  + filePath;
+
+		try {
+			InputStream inputStream = new FileInputStream(targetPath);
+			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "utf-8"));
+			Properties props = new Properties();
+			props.load(bufferedReader);
+
+			Map<String, Double> map = new HashMap<>();
+			for(Map.Entry entry : props.entrySet())
+				map.put(String.valueOf(entry.getKey()), Double.parseDouble(entry.getValue().toString()));
+
+			inputStream.close();
+			bufferedReader.close();
+
+			return map;
+		} catch (IOException e) {
+
+			System.err.println("属性文件读取错误");
+			return null;
+		}
+	}
 
 	/**
 	 * 更新一个键值对

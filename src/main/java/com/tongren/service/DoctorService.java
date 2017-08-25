@@ -86,11 +86,7 @@ public class DoctorService extends BaseService<Doctor> {
      */
     public List<Doctor> querySurgeonAndHelperList() {
 
-        Example example = new Example(Doctor.class);
-        Example.Criteria criteria = example.createCriteria();
-
-        criteria.andLike(Constant.LEVEL, "%医师%");
-        return this.getMapper().selectByExample(example);
+        return this.doctorMapper.selectSurgeonAndHelper();
     }
 
 }

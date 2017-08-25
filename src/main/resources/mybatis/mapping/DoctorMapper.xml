@@ -10,4 +10,10 @@
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="level" property="level" jdbcType="VARCHAR" />
   </resultMap>
+
+  <select id="selectSurgeonAndHelper" resultMap="BaseResultMap">
+    select * from doctor
+    where level like '%医师%'
+    or level like '%研究生%'
+  </select>
 </mapper>
