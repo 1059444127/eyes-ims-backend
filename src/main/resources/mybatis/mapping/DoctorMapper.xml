@@ -9,6 +9,7 @@
     <result column="salary_num" property="salaryNum" jdbcType="VARCHAR" />
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="level" property="level" jdbcType="VARCHAR" />
+    <result column="group_id" property="groupId" jdbcType="INTEGER" />
   </resultMap>
 
   <select id="selectSurgeonAndHelper" resultMap="BaseResultMap">

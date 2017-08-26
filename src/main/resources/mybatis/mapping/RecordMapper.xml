@@ -11,6 +11,7 @@
     <result column="eye" property="eye" jdbcType="VARCHAR" />
     <result column="place" property="place" jdbcType="VARCHAR" />
     <result column="date" property="date" jdbcType="DATE" />
+    <result column="inputer_id" property="inputerId" jdbcType="INTEGER" />
   </resultMap>
 
   <resultMap id="RecordExtend" type="com.tongren.pojo.RecordExtend" >
@@ -26,6 +27,8 @@
     <result column="surgeons" property="surgeons" jdbcType="VARCHAR" />
     <result column="helpers" property="helpers" jdbcType="VARCHAR" />
     <result column="date" property="date" jdbcType="DATE" />
+    <result column="inputer_id" property="inputerId" jdbcType="INTEGER" />
+    <result column="inputer_name" property="inputerName" jdbcType="VARCHAR" />
   </resultMap>
 
   <resultMap id="RecordExtend1" type="com.tongren.pojo.RecordExtend1" >
@@ -38,11 +41,14 @@
     <result column="eye" property="eye" jdbcType="VARCHAR" />
     <result column="place" property="place" jdbcType="VARCHAR" />
     <result column="date" property="date" jdbcType="DATE" />
-    <result column="doctor_score" property="doctorScore" jdbcType="INTEGER" />
+    <result column="inputer_id" property="inputerId" jdbcType="INTEGER" />
+
+    <result column="doctor_score" property="doctorScore" jdbcType="DOUBLE" />
   </resultMap>
 
   <select id="selectByFiltersForAdmin" resultMap="RecordExtend" parameterType="map">
     select record.*,
+           user.username as inputer_name,
            surgery_tmp.info as surgeries,
            surgeon_tmp.info as surgeons,
            helper_tmp.info  as helpers
@@ -70,6 +76,10 @@
     where doctor_type = '助手'
     group by record_id) as helper_tmp
     on helper_tmp.record_id = record.id
+
+    left join
+    user
+    on user.id = record.inputer_id
 
     <where>
 
@@ -108,9 +118,10 @@
 
   <select id="selectByFiltersForOthers" resultMap="RecordExtend" parameterType="map">
     select record.*,
-    surgery_tmp.info as surgeries,
-    surgeon_tmp.info as surgeons,
-    helper_tmp.info  as helpers
+           user.username as inputer_name,
+           surgery_tmp.info as surgeries,
+           surgeon_tmp.info as surgeons,
+           helper_tmp.info  as helpers
     from record
 
     left join
@@ -136,10 +147,17 @@
     group by record_id) as helper_tmp
     on helper_tmp.record_id = record.id
 
+    left join
+    user
+    on user.id = record.inputer_id
+
     <where>
+      <if test="inputerId != null">
+        inputer_id = #{inputerId}
+      </if>
 
       <if test="historyNum != null and historyNum != ''">
-        history_num like concat('%', #{historyNum}, '%')
+        and history_num like concat('%', #{historyNum}, '%')
       </if>
 
       <if test="patientName != null and patientName != ''">
@@ -232,7 +250,7 @@
     </where>
   </select>
 
-  <select id="selectTotalScore" resultType="java.lang.Integer" parameterType="map">
+  <select id="selectTotalScore" resultType="java.lang.Double" parameterType="map">
     select SUM(doctor_score)
     from record
     left join record_doctor

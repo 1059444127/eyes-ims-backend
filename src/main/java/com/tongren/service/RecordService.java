@@ -6,6 +6,7 @@ import com.tongren.bean.Identity;
 import com.tongren.mapper.RecordMapper;
 import com.tongren.pojo.*;
 import com.tongren.util.Validator;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,11 +99,11 @@ public class RecordService extends BaseService<Record> {
         Date date = record.getDate();
 
         //获取手术级别、医师级别系数列表
-        Map<String, Integer> levels = this.propertyService.readIntegers(Constant.LEVEL_PROPERTIES_FILE_PATH);
+        Map<String, Double> levels = this.propertyService.readDoubles(Constant.LEVEL_PROPERTIES_FILE_PATH);
 
 
         //本场手术的最大级别系数
-        Integer maxSurgeryLevel = 1;
+        Double maxSurgeryLevel = 0.0;
 
         //构造手术记录-所做手术对象
         if(!Validator.checkNull(surgeries)) {
@@ -116,7 +117,7 @@ public class RecordService extends BaseService<Record> {
                 this.recordSurgeryService.save(recordSurgery);
 
                 //每轮比较找出最高级别手术
-                Integer level = levels.get(this.surgeryService.queryById(surgeryId).getLevel());
+                Double level = levels.get(this.surgeryService.queryById(surgeryId).getLevel());
                 maxSurgeryLevel = level > maxSurgeryLevel ? level : maxSurgeryLevel;
             }
         }
@@ -193,11 +194,11 @@ public class RecordService extends BaseService<Record> {
         Date date = record.getDate();
 
         //获取手术级别、医师级别系数列表
-        Map<String, Integer> levels = this.propertyService.readIntegers(Constant.LEVEL_PROPERTIES_FILE_PATH);
+        Map<String, Double> levels = this.propertyService.readDoubles(Constant.LEVEL_PROPERTIES_FILE_PATH);
 
 
         //本场手术的最大级别系数
-        Integer maxSurgeryLevel = 1;
+        Double maxSurgeryLevel = 0.0;
 
 
         //删除手术记录-所做手术 原来的信息
@@ -223,7 +224,7 @@ public class RecordService extends BaseService<Record> {
                 this.recordSurgeryService.save(recordSurgery);
 
                 //每轮比较找出最高级别手术
-                Integer level = levels.get(this.surgeryService.queryById(surgeryId).getLevel());
+                Double level = levels.get(this.surgeryService.queryById(surgeryId).getLevel());
                 maxSurgeryLevel = level > maxSurgeryLevel ? level : maxSurgeryLevel;
             }
         }
@@ -287,10 +288,10 @@ public class RecordService extends BaseService<Record> {
      * @param levels
      * @return
      */
-    private Integer calDoctorScore(String doctorLevel, Integer maxSurgeryLevel, Map<String, Integer> levels) {
+    private Double calDoctorScore(String doctorLevel, Double maxSurgeryLevel, Map<String, Double> levels) {
 
         //根据level和本场最高级别手术计算乘积得到工作量积分score
-        Integer score = 0;
+        Double score = 0.0;
         if(doctorLevel.indexOf(Constant.DOCTOR_VICEHEAD) != -1) {
 
             score = levels.get(Constant.DOCTOR_VICEHEAD) * maxSurgeryLevel;
@@ -338,7 +339,7 @@ public class RecordService extends BaseService<Record> {
         return this.recordMapper.selectDetailByFiltersForAdmin(filters);
     }
 
-    public Integer queryTotalScore(Map<String, Object> filters) {
+    public Double queryTotalScore(Map<String, Object> filters) {
 
         return this.recordMapper.selectTotalScore(filters);
     }
@@ -643,7 +644,7 @@ public class RecordService extends BaseService<Record> {
 
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet inputSheet = workbook.createSheet("医师手术记录");
-        inputSheet.setDefaultColumnWidth(20);
+        inputSheet.setDefaultColumnWidth(13);
         inputSheet.setDefaultRowHeight((short) (1.6 * 256));
 
         // 第一行，6个单元格合并，检查亚类
@@ -667,7 +668,7 @@ public class RecordService extends BaseService<Record> {
                     0, //first firstRow (0-based)
                     0, //last firstRow (0-based)
                     0, //first column (0-based)
-                    7 //last column (0-based)
+                    8 //last column (0-based)
             ));
         }
 
@@ -677,13 +678,21 @@ public class RecordService extends BaseService<Record> {
             XSSFFont boldFont = workbook.createFont();
             boldFont.setBoldweight(XSSFFont.BOLDWEIGHT_BOLD); // 加粗
             XSSFCellStyle boldStyle = workbook.createCellStyle();
+            boldStyle.setAlignment(XSSFCellStyle.ALIGN_CENTER);
             boldStyle.setFont(boldFont);
 
-            XSSFCell cell = firstRow.createCell((short) 8);
+            XSSFCell cell = firstRow.createCell((short) 7);
             cell.setCellStyle(boldStyle);
             boldFont.setColor(XSSFFont.COLOR_RED); // 红色
-            Integer totalScore = this.queryTotalScore(params);
-            cell.setCellValue("累计工作量：" + (totalScore == null ? 0 : totalScore));
+            Double totalScore = this.queryTotalScore(params);
+            cell.setCellValue("累计工作量：" + (totalScore == null ? 0 : totalScore)  + " 分");
+
+            inputSheet.addMergedRegion(new CellRangeAddress(
+                    1, //first firstRow (0-based)
+                    1, //last firstRow (0-based)
+                    7, //first column (0-based)
+                    8 //last column (0-based)
+            ));
         }
 
         // 第三行：表头
@@ -692,8 +701,8 @@ public class RecordService extends BaseService<Record> {
 
             XSSFFont boldFont = workbook.createFont();
             boldFont.setBoldweight(XSSFFont.BOLDWEIGHT_BOLD); // 加粗
-
             XSSFCellStyle boldStyle = workbook.createCellStyle();
+            boldStyle.setAlignment(XSSFCellStyle.ALIGN_CENTER);
             boldStyle.setFont(boldFont);
 
 
@@ -736,36 +745,48 @@ public class RecordService extends BaseService<Record> {
 
         //第四行：数据
         {
+            XSSFCellStyle centerStyle = workbook.createCellStyle();
+            centerStyle.setAlignment(XSSFCellStyle.ALIGN_CENTER);
+
             int rowIndex = 3;
             for (RecordExtend1 detail : detailList) {
                 XSSFRow row = inputSheet.createRow((short) rowIndex);
 
                 XSSFCell cell = row.createCell((short) 0);
+                cell.setCellStyle(centerStyle);
                 cell.setCellValue(detail.getHistoryNum());
 
                 cell = row.createCell((short) 1);
+                cell.setCellStyle(centerStyle);
                 cell.setCellValue(detail.getType());
 
                 cell = row.createCell((short) 2);
+                cell.setCellStyle(centerStyle);
                 cell.setCellValue(detail.getName());
 
                 cell = row.createCell((short) 3);
+                cell.setCellStyle(centerStyle);
                 cell.setCellValue(detail.getSex());
 
                 cell = row.createCell((short) 4);
+                cell.setCellStyle(centerStyle);
                 cell.setCellValue(detail.getAge());
 
                 cell = row.createCell((short) 5);
+                cell.setCellStyle(centerStyle);
                 cell.setCellValue(detail.getEye());
 
                 cell = row.createCell((short) 6);
+                cell.setCellStyle(centerStyle);
                 cell.setCellValue(detail.getPlace());
 
                 cell = row.createCell((short) 7);
+                cell.setCellStyle(centerStyle);
                 cell.setCellValue(new SimpleDateFormat("yyyy-MM-dd").format(detail.getDate()));
 
                 cell = row.createCell((short) 8);
-                cell.setCellValue(detail.getDoctorScore());
+                cell.setCellStyle(centerStyle);
+                cell.setCellValue(detail.getDoctorScore() + " 分");
 
                 rowIndex++;
             }

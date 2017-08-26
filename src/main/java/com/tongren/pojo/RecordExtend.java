@@ -34,6 +34,10 @@ public class RecordExtend {
 
 	private Date date;
 
+	@Column(name = "inputer_id")
+	private Integer inputerId;
+
+	private String inputerName;
 	/**
 	 * @return id
 	 */
@@ -177,5 +181,21 @@ public class RecordExtend {
 
 	public void setPlace(String place) {
 		this.place = place;
+	}
+
+	public Integer getInputerId() {
+		return inputerId;
+	}
+
+	public void setInputerId(Integer inputerId) {
+		this.inputerId = inputerId;
+	}
+
+	public String getInputerName() {
+		return inputerName;
+	}
+
+	public void setInputerName(String inputerName) {
+		this.inputerName = inputerName;
 	}
 }

@@ -31,7 +31,7 @@ public class RecordDoctor {
     private String doctorLevel;
 
     @Column(name = "doctor_score")
-    private Integer doctorScore;
+    private Double doctorScore;
 
     private Date date;
 
@@ -140,14 +140,14 @@ public class RecordDoctor {
     /**
      * @return doctor_score
      */
-    public Integer getDoctorScore() {
+    public Double getDoctorScore() {
         return doctorScore;
     }
 
     /**
      * @param doctorScore
      */
-    public void setDoctorScore(Integer doctorScore) {
+    public void setDoctorScore(Double doctorScore) {
         this.doctorScore = doctorScore;
     }
 

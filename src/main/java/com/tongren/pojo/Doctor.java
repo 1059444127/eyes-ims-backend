@@ -17,6 +17,9 @@ public class Doctor {
 
     private String level;
 
+    @Column(name = "group_id")
+    private Integer groupId;
+
     /**
      * @return id
      */
@@ -71,5 +74,19 @@ public class Doctor {
      */
     public void setLevel(String level) {
         this.level = level;
+    }
+
+    /**
+     * @return group_id
+     */
+    public Integer getGroupId() {
+        return groupId;
+    }
+
+    /**
+     * @param groupId
+     */
+    public void setGroupId(Integer groupId) {
+        this.groupId = groupId;
     }
 }

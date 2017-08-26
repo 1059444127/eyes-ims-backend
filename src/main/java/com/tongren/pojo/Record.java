@@ -28,6 +28,9 @@ public class Record {
 
     private Date date;
 
+    @Column(name = "inputer_id")
+    private Integer inputerId;
+
     /**
      * @return id
      */
@@ -152,5 +155,19 @@ public class Record {
      */
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    /**
+     * @return inputer_id
+     */
+    public Integer getInputerId() {
+        return inputerId;
+    }
+
+    /**
+     * @param inputerId
+     */
+    public void setInputerId(Integer inputerId) {
+        this.inputerId = inputerId;
     }
 }

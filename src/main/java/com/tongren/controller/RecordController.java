@@ -53,8 +53,9 @@ public class RecordController {
      */
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
-    public CommonResult addRecord(@RequestBody Map<String, Object> params) {
+    public CommonResult addRecord(@RequestBody Map<String, Object> params, HttpSession session) {
 
+        Identity identity = (Identity) session.getAttribute(Constant.IDENTITY);
 
         //手术记录的基本信息
         Date date = TimeUtil.parseTime((String) params.get("date"));
@@ -96,6 +97,7 @@ public class RecordController {
         record.setType(type);
         record.setDate(date);
         record.setPlace(place);
+        record.setInputerId(Integer.parseInt(identity.getId()));
 
         if (this.recordService.save(record, surgeries, surgeons, helpers) != Constant.CRUD_SUCCESS) {
             return CommonResult.failure("事务错误");
@@ -230,6 +232,8 @@ public class RecordController {
     @ResponseBody
     public CommonResult queryRecords(@RequestBody Map<String, Object> params, HttpSession session) {
 
+        Identity identity = (Identity) session.getAttribute(Constant.IDENTITY);
+
         Integer pageNow = (Integer) params.get(Constant.PAGE_NOW);
         Integer pageSize = (Integer) params.get(Constant.PAGE_SIZE);
 
@@ -237,9 +241,9 @@ public class RecordController {
         Date endTime = TimeUtil.parseTime((String) params.get("endTime"));
         params.put("beginTime", beginTime);
         params.put("endTime", endTime);
+        params.put("inputerId", identity.getId());
 
         //根据角色查询不同的信息（仅管理员能查询工作量）
-        Identity identity = (Identity) session.getAttribute(Constant.IDENTITY);
         String role = identity.getRole();
         List<RecordExtend> recordList = null;
         if (Constant.ADMIN.equals(role)) {
@@ -330,7 +334,7 @@ public class RecordController {
         params.put("beginTime", beginTime);
         params.put("endTime", endTime);
 
-        Integer totalScore = this.recordService.queryTotalScore(params);
+        Double totalScore = this.recordService.queryTotalScore(params);
         if (totalScore == null) {
             return CommonResult.success("查询失败");
         }

@@ -28,7 +28,10 @@ public class RecordExtend1 {
 
 	private Date date;
 
-	private Integer doctorScore;
+	@Column(name = "inputer_id")
+	private Integer inputerId;
+
+	private Double doctorScore;
 
 	/**
 	 * @return id
@@ -151,11 +154,20 @@ public class RecordExtend1 {
 		this.place = place;
 	}
 
-	public Integer getDoctorScore() {
+
+	public Integer getInputerId() {
+		return inputerId;
+	}
+
+	public void setInputerId(Integer inputerId) {
+		this.inputerId = inputerId;
+	}
+
+	public Double getDoctorScore() {
 		return doctorScore;
 	}
 
-	public void setDoctorScore(Integer doctorScore) {
+	public void setDoctorScore(Double doctorScore) {
 		this.doctorScore = doctorScore;
 	}
 }

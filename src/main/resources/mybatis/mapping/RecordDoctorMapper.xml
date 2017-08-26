@@ -12,7 +12,7 @@
     <result column="doctor_salary_num" property="doctorSalaryNum" jdbcType="VARCHAR" />
     <result column="doctor_name" property="doctorName" jdbcType="VARCHAR" />
     <result column="doctor_level" property="doctorLevel" jdbcType="VARCHAR" />
-    <result column="doctor_score" property="doctorScore" jdbcType="INTEGER" />
+    <result column="doctor_score" property="doctorScore" jdbcType="DOUBLE" />
     <result column="date" property="date" jdbcType="DATE" />
   </resultMap>
 </mapper>
