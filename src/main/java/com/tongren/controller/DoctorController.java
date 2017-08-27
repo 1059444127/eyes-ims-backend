@@ -6,10 +6,7 @@ import com.tongren.bean.Constant;
 import com.tongren.bean.Identity;
 import com.tongren.bean.PageResult;
 import com.tongren.bean.rolecheck.RequiredRoles;
-import com.tongren.pojo.Doctor;
-import com.tongren.pojo.RecordExtend1;
-import com.tongren.pojo.Record;
-import com.tongren.pojo.User;
+import com.tongren.pojo.*;
 import com.tongren.service.DoctorService;
 import com.tongren.service.PropertyService;
 import com.tongren.service.UserService;
@@ -58,6 +55,7 @@ public class DoctorController {
         String name = (String) params.get(Constant.NAME);
         String salaryNum = (String) params.get(Constant.SALARY_NUM);
         String level = (String) params.get(Constant.LEVEL);
+        Integer doctorGroupId = (Integer) params.get("doctorGroupId");
 
         Doctor doctor = new Doctor();
         User user = new User();
@@ -71,6 +69,7 @@ public class DoctorController {
             doctor.setName(name);
             doctor.setSalaryNum(salaryNum);
             doctor.setLevel(level);
+            doctor.setGroupId(doctorGroupId);
 
             user.setName(name);
             user.setUsername(salaryNum);
@@ -103,6 +102,7 @@ public class DoctorController {
         // 修改别的用户的时候不能修改name和phone
         String name = (String) params.get(Constant.NAME);
         String level = (String) params.get(Constant.LEVEL);
+        Integer doctorGroupId = (Integer) params.get("doctorGroupId");
 
         // 未修改的doctor
         Doctor doctor = this.doctorService.queryById(doctorId);
@@ -113,6 +113,10 @@ public class DoctorController {
 
         if (!Validator.checkEmpty(level)) {
             doctor.setLevel(level);
+        }
+
+        if (!Validator.checkNull(doctorGroupId)) {
+            doctor.setGroupId(doctorGroupId);
         }
 
         this.doctorService.update(doctor);
@@ -184,17 +188,11 @@ public class DoctorController {
         Integer pageNow = (Integer) params.get(Constant.PAGE_NOW);
         Integer pageSize = (Integer) params.get(Constant.PAGE_SIZE);
 
-        String name = (String) params.get(Constant.NAME);
-        String salaryNum = (String) params.get(Constant.SALARY_NUM);
-        String level = (String) params.get(Constant.LEVEL);
 
-        Identity identity = (Identity) session.getAttribute(Constant.IDENTITY);
-
-        List<Doctor> doctorList = this.doctorService.queryDoctorList(pageNow, pageSize, name, salaryNum, level);
+        List<DoctorExtend> doctorList = this.doctorService.queryDoctorList(pageNow, pageSize, params);
         PageResult pageResult = new PageResult(new PageInfo<>(doctorList));
 
-        logger.info("pageNow: {}, pageSize: {}, role: {}, phone: {}, name: {}", pageNow, pageSize, name, salaryNum, level);
-
+        logger.info("pageNow: {}, pageSize: {}", pageNow, pageSize);
         return CommonResult.success("查询成功", pageResult);
     }
 

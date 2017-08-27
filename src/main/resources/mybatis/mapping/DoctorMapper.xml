@@ -12,6 +12,40 @@
     <result column="group_id" property="groupId" jdbcType="INTEGER" />
   </resultMap>
 
+  <resultMap id="DoctorExtend" type="com.tongren.pojo.DoctorExtend" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="salary_num" property="salaryNum" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="level" property="level" jdbcType="VARCHAR" />
+    <result column="group_id" property="groupId" jdbcType="INTEGER" />
+    <result column="group_name" property="groupName" jdbcType="VARCHAR" />
+  </resultMap>
+
+
+
+
+  <select id="selectByFilters" resultMap="DoctorExtend" parameterType="map">
+    select doctor.*, doctor_group.name as group_name
+    from doctor
+    left join doctor_group
+    on doctor.group_id = doctor_group.id
+    <where>
+      <if test="name != null and name != ''">
+        doctor.name like concat('%', #{name}, '%')
+      </if>
+      <if test="salaryNum != null and salaryNum != ''">
+        and doctor.salary_num like concat('%', #{salaryNum}, '%')
+      </if>
+      <if test="level != null and level != ''">
+        and doctor.level like concat('%', #{level}, '%')
+      </if>
+      <if test="doctorGroupId != null and doctorGroupId != ''">
+        and doctor.group_id = #{doctorGroupId}
+      </if>
+    </where>
+
+  </select>
+
   <select id="selectSurgeonAndHelper" resultMap="BaseResultMap">
     select * from doctor
     where level like '%医师%'

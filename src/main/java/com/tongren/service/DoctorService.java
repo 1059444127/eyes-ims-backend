@@ -5,6 +5,7 @@ import com.tongren.bean.Constant;
 import com.tongren.mapper.DoctorMapper;
 import com.tongren.mapper.UserMapper;
 import com.tongren.pojo.Doctor;
+import com.tongren.pojo.DoctorExtend;
 import com.tongren.pojo.User;
 import com.tongren.util.Validator;
 import org.slf4j.Logger;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class DoctorService extends BaseService<Doctor> {
@@ -53,31 +55,13 @@ public class DoctorService extends BaseService<Doctor> {
      * 条件查询医师
      * @param pageNow
      * @param pageSize
-     * @param name
-     * @param salaryNum
-     * @param level
+     * @param filters
      * @return
      */
-    public List<Doctor> queryDoctorList(Integer pageNow, Integer pageSize, String name, String salaryNum, String level) {
-
-        Example example = new Example(Doctor.class);
-        Example.Criteria criteria = example.createCriteria();
-
-
-        if (!Validator.checkEmpty(name)) {
-            criteria.andLike(Constant.NAME, "%" + name + "%");
-        }
-
-        if (!Validator.checkEmpty(salaryNum)) {
-            criteria.andLike(Constant.SALARY_NUM, "%" + salaryNum + "%");
-        }
-
-        if (!Validator.checkEmpty(level)) {
-            criteria.andLike(Constant.LEVEL, "%" + level + "%");
-        }
+    public List<DoctorExtend> queryDoctorList(Integer pageNow, Integer pageSize, Map<String, Object> filters) {
 
         PageHelper.startPage(pageNow, pageSize);
-        return this.getMapper().selectByExample(example);
+        return this.doctorMapper.selectByFilters(filters);
     }
 
     /**
@@ -87,6 +71,19 @@ public class DoctorService extends BaseService<Doctor> {
     public List<Doctor> querySurgeonAndHelperList() {
 
         return this.doctorMapper.selectSurgeonAndHelper();
+    }
+
+    /**
+     *  检查医师组旗下是否存在任一医师
+     * @param doctorGroupId
+     * @return
+     */
+    public boolean isAnyDoctorUnderTheGroup(Integer doctorGroupId) {
+
+        Doctor doctor = new Doctor();
+        doctor.setGroupId(doctorGroupId);
+        List<Doctor> doctorList = this.getMapper().select(doctor);
+        return doctorList != null && doctorList.size() > 0;
     }
 
 }
