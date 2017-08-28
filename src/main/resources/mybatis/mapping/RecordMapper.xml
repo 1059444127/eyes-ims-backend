@@ -52,6 +52,7 @@
            surgery_tmp.info as surgeries,
            surgeon_tmp.info as surgeons,
            helper_tmp.info  as helpers
+
     from record
 
     left join
@@ -62,7 +63,7 @@
     on surgery_tmp.record_id = record.id
 
     left join
-    (select record_id, group_concat(concat(name, ' / ',record_doctor.doctor_level, ' / ', doctor_score, ' 分')) as info from record_doctor
+    (select record_id, group_concat(concat(name, ' / ',record_doctor.doctor_level, ' / ', doctor_group_name, ' / ', doctor_score, ' 分')) as info from record_doctor
     left join doctor
     on record_doctor.doctor_id = doctor.id
     where doctor_type = '术者'
@@ -70,7 +71,7 @@
     on surgeon_tmp.record_id = record.id
 
     left join
-    (select record_id, group_concat(concat(name, ' / ',record_doctor.doctor_level, ' / ', doctor_score, ' 分')) as info from record_doctor
+    (select record_id, group_concat(concat(name, ' / ',record_doctor.doctor_level, ' / ', doctor_group_name, ' / ', doctor_score, ' 分')) as info from record_doctor
     left join doctor
     on record_doctor.doctor_id = doctor.id
     where doctor_type = '助手'
@@ -111,6 +112,11 @@
         and helper_tmp.info like concat('%', #{helperName}, '%')
       </if>
 
+      <if test="doctorGroupName != null and doctorGroupName != ''">
+        and (surgeon_tmp.info like concat('%', #{doctorGroupName} , '%')
+          or helper_tmp.info  like concat('%', #{doctorGroupName} , '%'))
+      </if>
+
     </where>
 
     order by date desc
@@ -132,7 +138,7 @@
     on surgery_tmp.record_id = record.id
 
     left join
-    (select record_id, group_concat(concat(name)) as info from record_doctor
+    (select record_id, group_concat(concat(name, ' / ', doctor_group_name)) as info from record_doctor
     left join doctor
     on record_doctor.doctor_id = doctor.id
     where doctor_type = '术者'
@@ -140,7 +146,7 @@
     on surgeon_tmp.record_id = record.id
 
     left join
-    (select record_id, group_concat(concat(name)) as info from record_doctor
+    (select record_id, group_concat(concat(name, ' / ', doctor_group_name)) as info from record_doctor
     left join doctor
     on record_doctor.doctor_id = doctor.id
     where doctor_type = '助手'
@@ -182,6 +188,11 @@
 
       <if test="helperName != null and helperName != ''">
         and helper_tmp.info like concat('%', #{helperName}, '%')
+      </if>
+
+      <if test="doctorGroupName != null and doctorGroupName != ''">
+        and (surgeon_tmp.info like concat('%', #{doctorGroupName} , '%')
+        or helper_tmp.info  like concat('%', #{doctorGroupName} , '%'))
       </if>
 
     </where>

@@ -34,6 +34,9 @@ public class RecordService extends BaseService<Record> {
     private DoctorService doctorService;
 
     @Autowired
+    private DoctorGroupService doctorGroupService;
+
+    @Autowired
     private SurgeryService surgeryService;
 
     @Autowired
@@ -136,9 +139,12 @@ public class RecordService extends BaseService<Record> {
 
                 //获取术者当前的信息
                 Doctor doctor = this.doctorService.queryById(surgeonId);
+                DoctorGroup group = this.doctorGroupService.queryById(doctor.getGroupId());
                 recordDoctor.setDoctorType("术者");
                 recordDoctor.setDoctorName(doctor.getName());
                 recordDoctor.setDoctorSalaryNum(doctor.getSalaryNum());
+                recordDoctor.setDoctorGroupId(group.getId());
+                recordDoctor.setDoctorGroupName(group.getName());
                 recordDoctor.setDoctorLevel(doctor.getLevel());
                 recordDoctor.setDoctorScore(this.calDoctorScore(doctor.getLevel(), maxSurgeryLevel, levels));
 
@@ -160,9 +166,12 @@ public class RecordService extends BaseService<Record> {
 
                 //获取术者当前的信息
                 Doctor doctor = this.doctorService.queryById(helperId);
+                DoctorGroup group = this.doctorGroupService.queryById(doctor.getGroupId());
                 recordDoctor.setDoctorType("助手");
                 recordDoctor.setDoctorName(doctor.getName());
                 recordDoctor.setDoctorSalaryNum(doctor.getSalaryNum());
+                recordDoctor.setDoctorGroupId(group.getId());
+                recordDoctor.setDoctorGroupName(group.getName());
                 recordDoctor.setDoctorLevel(doctor.getLevel());
                 recordDoctor.setDoctorScore(this.calDoctorScore(doctor.getLevel(), maxSurgeryLevel, levels));
 
@@ -244,9 +253,12 @@ public class RecordService extends BaseService<Record> {
 
                 //获取术者当前的信息
                 Doctor doctor = this.doctorService.queryById(surgeonId);
+                DoctorGroup group = this.doctorGroupService.queryById(doctor.getGroupId());
                 recordDoctor.setDoctorType("术者");
                 recordDoctor.setDoctorName(doctor.getName());
                 recordDoctor.setDoctorSalaryNum(doctor.getSalaryNum());
+                recordDoctor.setDoctorGroupId(group.getId());
+                recordDoctor.setDoctorGroupName(group.getName());
                 recordDoctor.setDoctorLevel(doctor.getLevel());
                 recordDoctor.setDoctorScore(this.calDoctorScore(doctor.getLevel(), maxSurgeryLevel, levels));
 
@@ -268,9 +280,12 @@ public class RecordService extends BaseService<Record> {
 
                 //获取术者当前的信息
                 Doctor doctor = this.doctorService.queryById(helperId);
+                DoctorGroup group = this.doctorGroupService.queryById(doctor.getGroupId());
                 recordDoctor.setDoctorType("助手");
                 recordDoctor.setDoctorName(doctor.getName());
                 recordDoctor.setDoctorSalaryNum(doctor.getSalaryNum());
+                recordDoctor.setDoctorGroupId(group.getId());
+                recordDoctor.setDoctorGroupName(group.getName());
                 recordDoctor.setDoctorLevel(doctor.getLevel());
                 recordDoctor.setDoctorScore(this.calDoctorScore(doctor.getLevel(), maxSurgeryLevel, levels));
 
@@ -398,7 +413,7 @@ public class RecordService extends BaseService<Record> {
                     0, //first firstRow (0-based)
                     0, //last firstRow (0-based)
                     0, //first column (0-based)
-                    16 //last column (0-based)
+                    18 //last column (0-based)
             ));
         }
 
@@ -472,7 +487,7 @@ public class RecordService extends BaseService<Record> {
             cell = secondRow.createCell((short) 11);
             cell.setCellStyle(boldStyle);
             cell.setCellValue("术者信息");
-            inputSheet.addMergedRegion(new CellRangeAddress( 1, 1, 11, 13));
+            inputSheet.addMergedRegion(new CellRangeAddress( 1, 1, 11, 14));
             cell = thirdRow.createCell((short) 11);
             cell.setCellStyle(boldStyle);
             cell.setCellValue("名称");
@@ -481,19 +496,25 @@ public class RecordService extends BaseService<Record> {
             cell.setCellValue("级别");
             cell = thirdRow.createCell((short) 13);
             cell.setCellStyle(boldStyle);
-            cell.setCellValue("工作量");
-
-            cell = secondRow.createCell((short) 14);
-            cell.setCellStyle(boldStyle);
-            cell.setCellValue("助手信息");
-            inputSheet.addMergedRegion(new CellRangeAddress( 1, 1, 14, 16));
+            cell.setCellValue("所在组");
             cell = thirdRow.createCell((short) 14);
             cell.setCellStyle(boldStyle);
-            cell.setCellValue("名称");
+            cell.setCellValue("工作量");
+
+            cell = secondRow.createCell((short) 15);
+            cell.setCellStyle(boldStyle);
+            cell.setCellValue("助手信息");
+            inputSheet.addMergedRegion(new CellRangeAddress( 1, 1, 15, 18));
             cell = thirdRow.createCell((short) 15);
             cell.setCellStyle(boldStyle);
-            cell.setCellValue("级别");
+            cell.setCellValue("名称");
             cell = thirdRow.createCell((short) 16);
+            cell.setCellStyle(boldStyle);
+            cell.setCellValue("级别");
+            cell = thirdRow.createCell((short) 17);
+            cell.setCellStyle(boldStyle);
+            cell.setCellValue("所在组");
+            cell = thirdRow.createCell((short) 18);
             cell.setCellStyle(boldStyle);
             cell.setCellValue("工作量");
         }
@@ -506,8 +527,8 @@ public class RecordService extends BaseService<Record> {
             for (RecordExtend record : recordList) {
 
                 String[] surgeries = record.getSurgeries() == null ? " / / ".split(",") : record.getSurgeries().split(",");
-                String[] surgeons = record.getSurgeons() == null ? " / / ".split(",") : record.getSurgeons().split(",");
-                String[] helpers = record.getHelpers() == null ? " / / ".split(",") : record.getHelpers().split(",");
+                String[] surgeons = record.getSurgeons() == null ? " / / / ".split(",") : record.getSurgeons().split(",");
+                String[] helpers = record.getHelpers() == null ? " / / / ".split(",") : record.getHelpers().split(",");
 
                 //计算最大的行数
                 int rowLength = surgeries.length;
@@ -588,7 +609,7 @@ public class RecordService extends BaseService<Record> {
                     String[] surgeon = surgeons[ri - rowIndex].split("/");
 
                     //创建列并填写
-                    for(int ci = 11; ci <= 13; ci++) {
+                    for(int ci = 11; ci <= 14; ci++) {
 
                         cell = rows[ri - rowIndex].createCell((short) ci);
                         cell.setCellStyle(centerStyle);
@@ -603,11 +624,11 @@ public class RecordService extends BaseService<Record> {
                     String[] helper = helpers[ri - rowIndex].split("/");
 
                     //创建列并填写
-                    for(int ci = 14; ci <= 16; ci++) {
+                    for(int ci = 15; ci <= 18; ci++) {
 
                         cell = rows[ri - rowIndex].createCell((short) ci);
                         cell.setCellStyle(centerStyle);
-                        cell.setCellValue(helper[ci - 14]);
+                        cell.setCellValue(helper[ci - 15]);
                     }
                 }
 

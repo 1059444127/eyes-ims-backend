@@ -35,6 +35,12 @@ public class RecordDoctor {
 
     private Date date;
 
+    @Column(name = "doctor_group_id")
+    private Integer doctorGroupId;
+
+    @Column(name = "doctor_group_name")
+    private String doctorGroupName;
+
     /**
      * @return id
      */
@@ -163,5 +169,33 @@ public class RecordDoctor {
      */
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    /**
+     * @return doctor_group_id
+     */
+    public Integer getDoctorGroupId() {
+        return doctorGroupId;
+    }
+
+    /**
+     * @param doctorGroupId
+     */
+    public void setDoctorGroupId(Integer doctorGroupId) {
+        this.doctorGroupId = doctorGroupId;
+    }
+
+    /**
+     * @return doctor_group_name
+     */
+    public String getDoctorGroupName() {
+        return doctorGroupName;
+    }
+
+    /**
+     * @param doctorGroupName
+     */
+    public void setDoctorGroupName(String doctorGroupName) {
+        this.doctorGroupName = doctorGroupName;
     }
 }

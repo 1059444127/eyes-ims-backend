@@ -13,6 +13,8 @@
     <result column="doctor_name" property="doctorName" jdbcType="VARCHAR" />
     <result column="doctor_level" property="doctorLevel" jdbcType="VARCHAR" />
     <result column="doctor_score" property="doctorScore" jdbcType="DOUBLE" />
+    <result column="doctor_group_id" property="doctorGroupId" jdbcType="INTEGER" />
+    <result column="doctor_group_name" property="doctorGroupName" jdbcType="VARCHAR" />
     <result column="date" property="date" jdbcType="DATE" />
   </resultMap>
 </mapper>
