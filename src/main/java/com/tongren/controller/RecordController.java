@@ -361,6 +361,6 @@ public class RecordController {
             return CommonResult.failure("下载失败");
         }
 
-        return CommonResult.success("下载成功", "/doctor_detail/医师手术记录_" + identity.getId() + ".xlsx");
+        return CommonResult.success("下载成功", "/record/手术记录_" + identity.getId() + ".xlsx");
     }
 }
