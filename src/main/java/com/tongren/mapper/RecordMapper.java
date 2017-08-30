@@ -17,9 +17,9 @@ public interface RecordMapper extends Mapper<Record> {
 
 	List<RecordExtend> selectByFiltersForOthers(Map<String, Object> filters);
 
-	List<RecordExtend1> selectDetailByFiltersForAdmin(Map<String, Object> filters);
+	List<RecordExtend> selectDetailByFiltersForAdmin(Map<String, Object> filters);
 
-	List<Record> selectDetailByFiltersForOthers(Map<String, Object> filters);
+	List<RecordExtend> selectDetailByFiltersForOthers(Map<String, Object> filters);
 
 	Double selectTotalScore(Map<String, Object> filters);
 

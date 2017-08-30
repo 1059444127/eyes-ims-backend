@@ -309,13 +309,13 @@ public class RecordController {
         String role = identity.getRole();
         if (Constant.ADMIN.equals(role)) {
 
-            List<RecordExtend1> detailList = this.recordService.queryDetailListForAdmin(pageNow, pageSize, params);
+            List<RecordExtend> detailList = this.recordService.queryDetailListForAdmin(pageNow, pageSize, params);
             PageResult pageResult = new PageResult(new PageInfo<>(detailList));
             return CommonResult.success("查询成功", pageResult);
 
         } else if (Constant.DOCTOR.equals(role)) {
 
-            List<Record> detailList = this.recordService.queryDetailListForOthers(pageNow, pageSize, params);
+            List<RecordExtend> detailList = this.recordService.queryDetailListForOthers(pageNow, pageSize, params);
             PageResult pageResult = new PageResult(new PageInfo<>(detailList));
             return CommonResult.success("查询成功", pageResult);
         } else {
@@ -354,9 +354,9 @@ public class RecordController {
 
         //根据角色查询不同的信息（仅管理员能查询工作量）
         Identity identity = (Identity) session.getAttribute(Constant.IDENTITY);
-        List<RecordExtend1> detailList = this.recordService.queryDetailListForAdmin(params);
+        List<RecordExtend> detailList = this.recordService.queryDetailListForAdmin(params);
 
-        if(this.recordService.exportDoctorDetail(detailList, params, identity) == Constant.CRUD_FAILURE) {
+        if(this.recordService.exportRecord(detailList, identity) == Constant.CRUD_FAILURE) {
 
             return CommonResult.failure("下载失败");
         }

@@ -55,7 +55,7 @@ public class Constant {
     //Token
     public static String TOKEN_ISSUER = "yhch";
     public static Long TOKEN_DURATION = 6000000L;
-    public static String TOKEN_API_KEY_SECRET = "yaochenkun_510108199311080018";
+    public static String TOKEN_API_KEY_SECRET = "yaochenkun_19931108";
 
     //文件服务器
     public static String FILE_PATH = "C:\\eyes_ims\\resources\\";

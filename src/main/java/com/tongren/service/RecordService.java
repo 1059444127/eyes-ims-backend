@@ -341,7 +341,7 @@ public class RecordService extends BaseService<Record> {
      * @param filters
      * @return
      */
-    public List<RecordExtend1> queryDetailListForAdmin(Integer pageNow,
+    public List<RecordExtend> queryDetailListForAdmin(Integer pageNow,
                                                        Integer pageSize,
                                                        Map<String, Object> filters) {
 
@@ -349,7 +349,7 @@ public class RecordService extends BaseService<Record> {
         return this.recordMapper.selectDetailByFiltersForAdmin(filters);
     }
 
-    public List<RecordExtend1> queryDetailListForAdmin(Map<String, Object> filters) {
+    public List<RecordExtend> queryDetailListForAdmin(Map<String, Object> filters) {
 
         return this.recordMapper.selectDetailByFiltersForAdmin(filters);
     }
@@ -367,7 +367,7 @@ public class RecordService extends BaseService<Record> {
      * @param filters
      * @return
      */
-    public List<Record> queryDetailListForOthers(Integer pageNow,
+    public List<RecordExtend> queryDetailListForOthers(Integer pageNow,
                                                  Integer pageSize,
                                                  Map<String, Object> filters) {
 
@@ -375,7 +375,7 @@ public class RecordService extends BaseService<Record> {
         return this.recordMapper.selectDetailByFiltersForOthers(filters);
     }
 
-    public List<Record> queryDetailListForOthers(Map<String, Object> filters) {
+    public List<RecordExtend> queryDetailListForOthers(Map<String, Object> filters) {
 
         return this.recordMapper.selectDetailByFiltersForOthers(filters);
     }
@@ -654,178 +654,178 @@ public class RecordService extends BaseService<Record> {
     }
 
 
-    /**
-     * 导出特定医师的详情表格
-     * @param detailList
-     * @param params
-     * @param identity
-     * @return
-     */
-    public Integer exportDoctorDetail(List<RecordExtend1> detailList, Map<String, Object> params, Identity identity) {
-
-        XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet inputSheet = workbook.createSheet("医师手术记录");
-        inputSheet.setDefaultColumnWidth(13);
-        inputSheet.setDefaultRowHeight((short) (1.6 * 256));
-
-        // 第一行，6个单元格合并，检查亚类
-        {
-            XSSFRow firstRow = inputSheet.createRow((short) 0);
-            XSSFCell firstRowCell = firstRow.createCell((short) 0);
-            firstRowCell.setCellValue("医师手术记录");
-
-            XSSFFont firstFont = workbook.createFont();
-            firstFont.setColor(XSSFFont.COLOR_RED); // 红色
-            firstFont.setBoldweight(XSSFFont.BOLDWEIGHT_BOLD); // 加粗
-            firstFont.setFontHeightInPoints((short) 14);
-
-            XSSFCellStyle firstStyle = workbook.createCellStyle();
-            firstStyle.setFont(firstFont);
-            firstStyle.setAlignment(XSSFCellStyle.ALIGN_CENTER);
-
-            firstRowCell.setCellStyle(firstStyle);
-
-            inputSheet.addMergedRegion(new CellRangeAddress(
-                    0, //first firstRow (0-based)
-                    0, //last firstRow (0-based)
-                    0, //first column (0-based)
-                    8 //last column (0-based)
-            ));
-        }
-
-        // 第二行表头： 累计积分
-        {
-            XSSFRow firstRow = inputSheet.createRow((short) 1);
-            XSSFFont boldFont = workbook.createFont();
-            boldFont.setBoldweight(XSSFFont.BOLDWEIGHT_BOLD); // 加粗
-            XSSFCellStyle boldStyle = workbook.createCellStyle();
-            boldStyle.setAlignment(XSSFCellStyle.ALIGN_CENTER);
-            boldStyle.setFont(boldFont);
-
-            XSSFCell cell = firstRow.createCell((short) 7);
-            cell.setCellStyle(boldStyle);
-            boldFont.setColor(XSSFFont.COLOR_RED); // 红色
-            Double totalScore = this.queryTotalScore(params);
-            cell.setCellValue("累计工作量：" + (totalScore == null ? 0 : totalScore)  + " 分");
-
-            inputSheet.addMergedRegion(new CellRangeAddress(
-                    1, //first firstRow (0-based)
-                    1, //last firstRow (0-based)
-                    7, //first column (0-based)
-                    8 //last column (0-based)
-            ));
-        }
-
-        // 第三行：表头
-        {
-            XSSFRow secondRow = inputSheet.createRow((short) 2);
-
-            XSSFFont boldFont = workbook.createFont();
-            boldFont.setBoldweight(XSSFFont.BOLDWEIGHT_BOLD); // 加粗
-            XSSFCellStyle boldStyle = workbook.createCellStyle();
-            boldStyle.setAlignment(XSSFCellStyle.ALIGN_CENTER);
-            boldStyle.setFont(boldFont);
-
-
-            XSSFCell cell = secondRow.createCell((short) 0);
-            cell.setCellStyle(boldStyle);
-            cell.setCellValue("病历号");
-
-            cell = secondRow.createCell((short) 1);
-            cell.setCellStyle(boldStyle);
-            cell.setCellValue("类型");
-
-            cell = secondRow.createCell((short) 2);
-            cell.setCellStyle(boldStyle);
-            cell.setCellValue("姓名");
-
-            cell = secondRow.createCell((short) 3);
-            cell.setCellStyle(boldStyle);
-            cell.setCellValue("性别");
-
-            cell = secondRow.createCell((short) 4);
-            cell.setCellStyle(boldStyle);
-            cell.setCellValue("年龄");
-
-            cell = secondRow.createCell((short) 5);
-            cell.setCellStyle(boldStyle);
-            cell.setCellValue("眼别");
-
-            cell = secondRow.createCell((short) 6);
-            cell.setCellStyle(boldStyle);
-            cell.setCellValue("地点");
-
-            cell = secondRow.createCell((short) 7);
-            cell.setCellStyle(boldStyle);
-            cell.setCellValue("日期");
-
-            cell = secondRow.createCell((short) 8);
-            cell.setCellStyle(boldStyle);
-            cell.setCellValue("本场工作量");
-        }
-
-        //第四行：数据
-        {
-            XSSFCellStyle centerStyle = workbook.createCellStyle();
-            centerStyle.setAlignment(XSSFCellStyle.ALIGN_CENTER);
-
-            int rowIndex = 3;
-            for (RecordExtend1 detail : detailList) {
-                XSSFRow row = inputSheet.createRow((short) rowIndex);
-
-                XSSFCell cell = row.createCell((short) 0);
-                cell.setCellStyle(centerStyle);
-                cell.setCellValue(detail.getHistoryNum());
-
-                cell = row.createCell((short) 1);
-                cell.setCellStyle(centerStyle);
-                cell.setCellValue(detail.getType());
-
-                cell = row.createCell((short) 2);
-                cell.setCellStyle(centerStyle);
-                cell.setCellValue(detail.getName());
-
-                cell = row.createCell((short) 3);
-                cell.setCellStyle(centerStyle);
-                cell.setCellValue(detail.getSex());
-
-                cell = row.createCell((short) 4);
-                cell.setCellStyle(centerStyle);
-                cell.setCellValue(detail.getAge());
-
-                cell = row.createCell((short) 5);
-                cell.setCellStyle(centerStyle);
-                cell.setCellValue(detail.getEye());
-
-                cell = row.createCell((short) 6);
-                cell.setCellStyle(centerStyle);
-                cell.setCellValue(detail.getPlace());
-
-                cell = row.createCell((short) 7);
-                cell.setCellStyle(centerStyle);
-                cell.setCellValue(new SimpleDateFormat("yyyy-MM-dd").format(detail.getDate()));
-
-                cell = row.createCell((short) 8);
-                cell.setCellStyle(centerStyle);
-                cell.setCellValue(detail.getDoctorScore() + " 分");
-
-                rowIndex++;
-            }
-        }
-
-        String userId = identity.getId();
-        String fileName = Constant.FILE_PATH + "doctor_detail/医师手术记录_" + userId + ".xlsx";
-
-        try {
-            FileOutputStream out = new FileOutputStream(new File(fileName));
-            workbook.write(out);
-            out.close();
-
-            return Constant.CRUD_SUCCESS;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return Constant.CRUD_FAILURE;
-        }
-    }
+//    /**
+//     * 导出特定医师的详情表格
+//     * @param detailList
+//     * @param params
+//     * @param identity
+//     * @return
+//     */
+//    public Integer exportDoctorDetail(List<RecordExtend> detailList, Map<String, Object> params, Identity identity) {
+//
+//        XSSFWorkbook workbook = new XSSFWorkbook();
+//        XSSFSheet inputSheet = workbook.createSheet("医师手术记录");
+//        inputSheet.setDefaultColumnWidth(13);
+//        inputSheet.setDefaultRowHeight((short) (1.6 * 256));
+//
+//        // 第一行，6个单元格合并，检查亚类
+//        {
+//            XSSFRow firstRow = inputSheet.createRow((short) 0);
+//            XSSFCell firstRowCell = firstRow.createCell((short) 0);
+//            firstRowCell.setCellValue("医师手术记录");
+//
+//            XSSFFont firstFont = workbook.createFont();
+//            firstFont.setColor(XSSFFont.COLOR_RED); // 红色
+//            firstFont.setBoldweight(XSSFFont.BOLDWEIGHT_BOLD); // 加粗
+//            firstFont.setFontHeightInPoints((short) 14);
+//
+//            XSSFCellStyle firstStyle = workbook.createCellStyle();
+//            firstStyle.setFont(firstFont);
+//            firstStyle.setAlignment(XSSFCellStyle.ALIGN_CENTER);
+//
+//            firstRowCell.setCellStyle(firstStyle);
+//
+//            inputSheet.addMergedRegion(new CellRangeAddress(
+//                    0, //first firstRow (0-based)
+//                    0, //last firstRow (0-based)
+//                    0, //first column (0-based)
+//                    8 //last column (0-based)
+//            ));
+//        }
+//
+//        // 第二行表头： 累计积分
+//        {
+//            XSSFRow firstRow = inputSheet.createRow((short) 1);
+//            XSSFFont boldFont = workbook.createFont();
+//            boldFont.setBoldweight(XSSFFont.BOLDWEIGHT_BOLD); // 加粗
+//            XSSFCellStyle boldStyle = workbook.createCellStyle();
+//            boldStyle.setAlignment(XSSFCellStyle.ALIGN_CENTER);
+//            boldStyle.setFont(boldFont);
+//
+//            XSSFCell cell = firstRow.createCell((short) 7);
+//            cell.setCellStyle(boldStyle);
+//            boldFont.setColor(XSSFFont.COLOR_RED); // 红色
+//            Double totalScore = this.queryTotalScore(params);
+//            cell.setCellValue("累计工作量：" + (totalScore == null ? 0 : totalScore)  + " 分");
+//
+//            inputSheet.addMergedRegion(new CellRangeAddress(
+//                    1, //first firstRow (0-based)
+//                    1, //last firstRow (0-based)
+//                    7, //first column (0-based)
+//                    8 //last column (0-based)
+//            ));
+//        }
+//
+//        // 第三行：表头
+//        {
+//            XSSFRow secondRow = inputSheet.createRow((short) 2);
+//
+//            XSSFFont boldFont = workbook.createFont();
+//            boldFont.setBoldweight(XSSFFont.BOLDWEIGHT_BOLD); // 加粗
+//            XSSFCellStyle boldStyle = workbook.createCellStyle();
+//            boldStyle.setAlignment(XSSFCellStyle.ALIGN_CENTER);
+//            boldStyle.setFont(boldFont);
+//
+//
+//            XSSFCell cell = secondRow.createCell((short) 0);
+//            cell.setCellStyle(boldStyle);
+//            cell.setCellValue("病历号");
+//
+//            cell = secondRow.createCell((short) 1);
+//            cell.setCellStyle(boldStyle);
+//            cell.setCellValue("类型");
+//
+//            cell = secondRow.createCell((short) 2);
+//            cell.setCellStyle(boldStyle);
+//            cell.setCellValue("姓名");
+//
+//            cell = secondRow.createCell((short) 3);
+//            cell.setCellStyle(boldStyle);
+//            cell.setCellValue("性别");
+//
+//            cell = secondRow.createCell((short) 4);
+//            cell.setCellStyle(boldStyle);
+//            cell.setCellValue("年龄");
+//
+//            cell = secondRow.createCell((short) 5);
+//            cell.setCellStyle(boldStyle);
+//            cell.setCellValue("眼别");
+//
+//            cell = secondRow.createCell((short) 6);
+//            cell.setCellStyle(boldStyle);
+//            cell.setCellValue("地点");
+//
+//            cell = secondRow.createCell((short) 7);
+//            cell.setCellStyle(boldStyle);
+//            cell.setCellValue("日期");
+//
+//            cell = secondRow.createCell((short) 8);
+//            cell.setCellStyle(boldStyle);
+//            cell.setCellValue("本场工作量");
+//        }
+//
+//        //第四行：数据
+//        {
+//            XSSFCellStyle centerStyle = workbook.createCellStyle();
+//            centerStyle.setAlignment(XSSFCellStyle.ALIGN_CENTER);
+//
+//            int rowIndex = 3;
+//            for (RecordExtend detail : detailList) {
+//                XSSFRow row = inputSheet.createRow((short) rowIndex);
+//
+//                XSSFCell cell = row.createCell((short) 0);
+//                cell.setCellStyle(centerStyle);
+//                cell.setCellValue(detail.getHistoryNum());
+//
+//                cell = row.createCell((short) 1);
+//                cell.setCellStyle(centerStyle);
+//                cell.setCellValue(detail.getType());
+//
+//                cell = row.createCell((short) 2);
+//                cell.setCellStyle(centerStyle);
+//                cell.setCellValue(detail.getName());
+//
+//                cell = row.createCell((short) 3);
+//                cell.setCellStyle(centerStyle);
+//                cell.setCellValue(detail.getSex());
+//
+//                cell = row.createCell((short) 4);
+//                cell.setCellStyle(centerStyle);
+//                cell.setCellValue(detail.getAge());
+//
+//                cell = row.createCell((short) 5);
+//                cell.setCellStyle(centerStyle);
+//                cell.setCellValue(detail.getEye());
+//
+//                cell = row.createCell((short) 6);
+//                cell.setCellStyle(centerStyle);
+//                cell.setCellValue(detail.getPlace());
+//
+//                cell = row.createCell((short) 7);
+//                cell.setCellStyle(centerStyle);
+//                cell.setCellValue(new SimpleDateFormat("yyyy-MM-dd").format(detail.getDate()));
+//
+//                cell = row.createCell((short) 8);
+//                cell.setCellStyle(centerStyle);
+//                cell.setCellValue(detail.getDoctorScore() + " 分");
+//
+//                rowIndex++;
+//            }
+//        }
+//
+//        String userId = identity.getId();
+//        String fileName = Constant.FILE_PATH + "doctor_detail/医师手术记录_" + userId + ".xlsx";
+//
+//        try {
+//            FileOutputStream out = new FileOutputStream(new File(fileName));
+//            workbook.write(out);
+//            out.close();
+//
+//            return Constant.CRUD_SUCCESS;
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            return Constant.CRUD_FAILURE;
+//        }
+//    }
 
 }

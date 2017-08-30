@@ -89,7 +89,11 @@
       </if>
 
       <if test="patientName != null and patientName != ''">
-        and name like concat('%', #{patientName}, '%')
+        and record.name like concat('%', #{patientName}, '%')
+      </if>
+
+      <if test="type != null and type != ''">
+        and record.type like concat('%', #{type}, '%')
       </if>
 
       <if test="place != null and place != ''">
@@ -167,7 +171,11 @@
       </if>
 
       <if test="patientName != null and patientName != ''">
-        and name like concat('%', #{patientName}, '%')
+        and record.name like concat('%', #{patientName}, '%')
+      </if>
+
+      <if test="type != null and type != ''">
+        and record.type like concat('%', #{type}, '%')
       </if>
 
       <if test="place != null and place != ''">
@@ -200,66 +208,139 @@
     order by date desc
   </select>
 
-  <select id="selectDetailByFiltersForAdmin" resultMap="RecordExtend1" parameterType="map">
+  <select id="selectDetailByFiltersForAdmin" resultMap="RecordExtend" parameterType="map">
     select record.*,
-           doctor_score
+    user.username as inputer_name,
+    surgery_tmp.info as surgeries,
+    surgeon_tmp.info as surgeons,
+    helper_tmp.info  as helpers
+
     from record
-    left join record_doctor
-    on record.id = record_doctor.record_id
+
+    left join
+    (select record_id, group_concat(concat(name, ' / ', surgery.level, ' / ', price, ' 元')) as info from record_surgery
+    left join surgery
+    on record_surgery.surgery_id = surgery.id
+    group by record_id) as surgery_tmp
+    on surgery_tmp.record_id = record.id
+
+    left join
+    (select record_id, group_concat(concat(name, ' / ',record_doctor.doctor_level, ' / ', doctor_group_name, ' / ', doctor_score, ' 分')) as info from record_doctor
+    left join doctor
+    on record_doctor.doctor_id = doctor.id
+    where doctor_type = '术者'
+    group by record_id) as surgeon_tmp
+    on surgeon_tmp.record_id = record.id
+
+    left join
+    (select record_id, group_concat(concat(name, ' / ',record_doctor.doctor_level, ' / ', doctor_group_name, ' / ', doctor_score, ' 分')) as info from record_doctor
+    left join doctor
+    on record_doctor.doctor_id = doctor.id
+    where doctor_type = '助手'
+    group by record_id) as helper_tmp
+    on helper_tmp.record_id = record.id
+
+    left join
+    user
+    on user.id = record.inputer_id
+
     <where>
 
       <if test="doctorId != null">
-        doctor_id = #{doctorId}
+        record.id in (select record_id from record_doctor where doctor_id = #{doctorId})
       </if>
 
       <if test="historyNum != null and historyNum != ''">
-        and record.history_num like concat('%', #{historyNum}, '%')
+        and history_num like concat('%', #{historyNum}, '%')
       </if>
 
       <if test="patientName != null and patientName != ''">
         and record.name like concat('%', #{patientName}, '%')
       </if>
 
+      <if test="type != null and type != ''">
+        and record.type like concat('%', #{type}, '%')
+      </if>
+
       <if test="place != null and place != ''">
-        and record.place like concat('%', #{place}, '%')
+        and place like concat('%', #{place}, '%')
       </if>
 
       <if test="beginTime != null and endTime != null">
-        and record.date between #{beginTime} and #{endTime}
+        and date between #{beginTime} and #{endTime}
       </if>
 
     </where>
+
+    order by date desc
   </select>
 
-  <select id="selectDetailByFiltersForOthers" resultMap="RecordExtend1" parameterType="map">
-    select record.*
+  <select id="selectDetailByFiltersForOthers" resultMap="RecordExtend" parameterType="map">
+    select record.*,
+    user.username as inputer_name,
+    surgery_tmp.info as surgeries,
+    surgeon_tmp.info as surgeons,
+    helper_tmp.info  as helpers
     from record
-    left join record_doctor
-    on record.id = record_doctor.record_id
+
+    left join
+    (select record_id, group_concat(concat(name, ' / ', surgery.level, ' / ', price, ' 元')) as info from record_surgery
+    left join surgery
+    on record_surgery.surgery_id = surgery.id
+    group by record_id) as surgery_tmp
+    on surgery_tmp.record_id = record.id
+
+    left join
+    (select record_id, group_concat(concat(name, ' / ', doctor_group_name)) as info from record_doctor
+    left join doctor
+    on record_doctor.doctor_id = doctor.id
+    where doctor_type = '术者'
+    group by record_id) as surgeon_tmp
+    on surgeon_tmp.record_id = record.id
+
+    left join
+    (select record_id, group_concat(concat(name, ' / ', doctor_group_name)) as info from record_doctor
+    left join doctor
+    on record_doctor.doctor_id = doctor.id
+    where doctor_type = '助手'
+    group by record_id) as helper_tmp
+    on helper_tmp.record_id = record.id
+
+    left join
+    user
+    on user.id = record.inputer_id
+
     <where>
 
       <if test="doctorId != null">
-        doctor_id = #{doctorId}
+        record.id in (select record_id from record_doctor where doctor_id = #{doctorId})
       </if>
 
       <if test="historyNum != null and historyNum != ''">
-        and record.history_num like concat('%', #{historyNum}, '%')
+        and history_num like concat('%', #{historyNum}, '%')
       </if>
 
       <if test="patientName != null and patientName != ''">
         and record.name like concat('%', #{patientName}, '%')
       </if>
 
+      <if test="type != null and type != ''">
+        and record.type like concat('%', #{type}, '%')
+      </if>
+
       <if test="place != null and place != ''">
-        and record.place like concat('%', #{place}, '%')
+        and place like concat('%', #{place}, '%')
       </if>
 
       <if test="beginTime != null and endTime != null">
-        and record.date between #{beginTime} and #{endTime}
+        and date between #{beginTime} and #{endTime}
       </if>
 
     </where>
+
+    order by date desc
   </select>
+
 
   <select id="selectTotalScore" resultType="java.lang.Double" parameterType="map">
     select SUM(doctor_score)
@@ -278,6 +359,10 @@
 
       <if test="patientName != null and patientName != ''">
         and record.name like concat('%', #{patientName}, '%')
+      </if>
+
+      <if test="type != null and type != ''">
+        and record.type like concat('%', #{type}, '%')
       </if>
 
       <if test="place != null and place != ''">
