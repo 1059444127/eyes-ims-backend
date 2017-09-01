@@ -108,7 +108,7 @@ public class AuthController {
         logger.info("inputCode = {}", inputCode);
 
 //        String code = redisService.get(Constant.REDIS_PRE_CODE + phone);
-        String code = "1993";
+        String code = Constant.AUTH_CODE;
         if (code == null) {
             return CommonResult.failure("验证码过期");
         } else if (!code.equals(inputCode)) {
@@ -156,7 +156,7 @@ public class AuthController {
             return CommonResult.failure("不存在该用户");
         }
 
-        String code = "1993";
+        String code = Constant.AUTH_CODE;
         if (code == null) {
             return CommonResult.failure("验证码过期");
         } else if (!code.equals(inputCode)) {

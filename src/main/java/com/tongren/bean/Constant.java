@@ -6,6 +6,7 @@ package com.tongren.bean;
  */
 public class Constant {
 
+    public static String AUTH_CODE = "58269911";
     public static String DEFAULT_PASSWORD = "123456";
     public static String PASSWORD = "password";
     public static String USERNAME = "username";
