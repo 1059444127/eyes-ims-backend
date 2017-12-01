@@ -117,8 +117,7 @@
       </if>
 
       <if test="doctorGroupName != null and doctorGroupName != ''">
-        and (surgeon_tmp.info like concat('%', #{doctorGroupName} , '%')
-          or helper_tmp.info  like concat('%', #{doctorGroupName} , '%'))
+        and surgeon_tmp.info like concat('%', #{doctorGroupName} , '%')
       </if>
 
     </where>
@@ -199,8 +198,7 @@
       </if>
 
       <if test="doctorGroupName != null and doctorGroupName != ''">
-        and (surgeon_tmp.info like concat('%', #{doctorGroupName} , '%')
-        or helper_tmp.info  like concat('%', #{doctorGroupName} , '%'))
+        and surgeon_tmp.info like concat('%', #{doctorGroupName} , '%')
       </if>
 
     </where>

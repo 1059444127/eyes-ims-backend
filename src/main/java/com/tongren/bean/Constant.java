@@ -59,6 +59,6 @@ public class Constant {
     public static String TOKEN_API_KEY_SECRET = "yaochenkun_19931108";
 
     //文件服务器
-    public static String FILE_PATH = "C:\\eyes_ims\\resources\\";
+    public static String FILE_PATH = "C:\\eyes_ims\\frontend\\resources\\";
     //public static String FILE_PATH = "/Users/ken/Documents/";
 }
